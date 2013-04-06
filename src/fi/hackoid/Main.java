@@ -113,7 +113,7 @@ public class Main extends SimpleBaseGameActivity {
 		scene.attachChild(player);
 		scene.attachChild(enemy);
 
-		final Sprite horizontalControl = new Sprite(0, 665, horizontalControlTexture, this.getVertexBufferObjectManager()) {
+		final Sprite horizontalControl = new Sprite(0, 610, 340, 110, horizontalControlTexture, this.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 
