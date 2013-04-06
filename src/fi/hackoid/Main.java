@@ -21,16 +21,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 public class Main extends SimpleBaseGameActivity {
-	// ===========================================================
-	// Constants
-	// ===========================================================
 
 	private static final int CAMERA_WIDTH = 1280;
 	private static final int CAMERA_HEIGHT = 720;
-
-	// ===========================================================
-	// Fields
-	// ===========================================================
 
 	private BitmapTextureAtlas mAutoParallaxBackgroundTexture;
 
@@ -42,26 +35,15 @@ public class Main extends SimpleBaseGameActivity {
 	private ITextureRegion horizontalControlTexture;
 
 	private Camera camera;
+	private AutoParallaxBackground autoParallaxBackground;
 
 	private Player player = new Player();
-	
+
 	private float playerSpeed;
-
-	// ===========================================================
-	// Constructors
-	// ===========================================================
-
-	// ===========================================================
-	// Getter & Setter
-	// ===========================================================
-
-	// ===========================================================
-	// Methods for/from SuperClass/Interfaces
-	// ===========================================================
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
-		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+		camera = new CustomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		return new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH,
 				CAMERA_HEIGHT), camera);
@@ -93,7 +75,7 @@ public class Main extends SimpleBaseGameActivity {
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 
 		final Scene scene = new Scene();
-		final AutoParallaxBackground autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 5);
+		autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 0);
 		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0, CAMERA_HEIGHT
 				- this.mParallaxLayerBack.getHeight(), this.mParallaxLayerBack, vertexBufferObjectManager)));
@@ -108,6 +90,9 @@ public class Main extends SimpleBaseGameActivity {
 		createControllers();
 
 		scene.attachChild(player.getAnimatedSprite());
+
+		camera.setChaseEntity(player.getAnimatedSprite());
+		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
 
 		return scene;
 	}
@@ -130,10 +115,10 @@ public class Main extends SimpleBaseGameActivity {
 						playerSpeed = X - xSize / 2;
 					}
 				}
-				if(xSize - X < 60 || Y < 40)
-				{
+				if (xSize - X < 60 || Y < 40) {
 					playerSpeed = 0;
 				}
+				autoParallaxBackground.setParallaxChangePerSecond(playerSpeed / 5);
 				player.getPhysicsHandler().setVelocity(playerSpeed * 2, 0);
 				Log.w("debug", "horizontal control clicked: X: '" + X + "' Y: '" + Y + "'");
 				return true;
@@ -143,11 +128,11 @@ public class Main extends SimpleBaseGameActivity {
 		yourHud.attachChild(horizontalControl);
 		this.camera.setHUD(yourHud);
 	}
-	
+
 	@Override
 	public boolean onKeyDown(final int pKeyCode, final KeyEvent pEvent) {
-		if(pKeyCode == KeyEvent.KEYCODE_MENU && pEvent.getAction() == KeyEvent.ACTION_DOWN) {
-			if(mEngine.isRunning()) {
+		if (pKeyCode == KeyEvent.KEYCODE_MENU && pEvent.getAction() == KeyEvent.ACTION_DOWN) {
+			if (mEngine.isRunning()) {
 				mEngine.stop();
 			} else {
 				mEngine.start();
@@ -157,11 +142,4 @@ public class Main extends SimpleBaseGameActivity {
 			return super.onKeyDown(pKeyCode, pEvent);
 		}
 	}
-	// ===========================================================
-	// Methods
-	// ===========================================================
-
-	// ===========================================================
-	// Inner and Anonymous Classes
-	// ===========================================================
 }

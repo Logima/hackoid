@@ -28,10 +28,6 @@ public class Player {
 	}
 
 	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, int cameraWidth, int cameraHeight) {
-		/*
-		 * Calculate the coordinates for the face, so its centered on the
-		 * camera.
-		 */
 		final float playerX = (cameraWidth - textureRegion.getWidth()) / 2;
 		final float playerY = cameraHeight - textureRegion.getHeight() - 5;
 
