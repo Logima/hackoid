@@ -107,7 +107,7 @@ public class Player {
 
 	public void jump() {
 		Log.w("debug", "jump pressed " + animatedSprite.getY());
-		if (animatedSprite.getY() > 290) {
+		if (Math.abs(body.getLinearVelocity().y) < 0.5) {
 			body.setLinearVelocity(body.getLinearVelocity().x, -15);
 		}
 	}
