@@ -17,6 +17,8 @@ public class Player {
 
 	private AnimatedSprite animatedSprite;
 
+	private float oldSpeed;
+
 	public Player() {
 	}
 
@@ -35,12 +37,24 @@ public class Player {
 		animatedSprite.setScaleCenterY(textureRegion.getHeight());
 		animatedSprite.setScale(1);
 
-		long[] frameTimes = new long[] { 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 100, 100, 100, 100,
-				100, 100, 100, 100, 0 };
-		animatedSprite.animate(frameTimes, 0, 21, true);
+		animatedSprite.setCurrentTileIndex(0);
 
 		physicsHandler = new PhysicsHandler(animatedSprite);
 		animatedSprite.registerUpdateHandler(physicsHandler);
+	}
+
+	public void run(float speed) {
+		physicsHandler.setVelocity(speed * 2, 0);
+
+		if (speed == 0) {
+			animatedSprite.stopAnimation();
+			animatedSprite.setCurrentTileIndex(0);
+		} else if (oldSpeed == 0) {
+			long[] frameTimes = new long[] { 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 100, 100, 100, 100,
+					100, 100, 100, 100, 0 };
+			animatedSprite.animate(frameTimes, 0, 21, true);
+		}
+		oldSpeed = speed;
 	}
 
 	public PhysicsHandler getPhysicsHandler() {

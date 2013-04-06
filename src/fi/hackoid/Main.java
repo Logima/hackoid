@@ -40,8 +40,6 @@ public class Main extends SimpleBaseGameActivity {
 	private Player player = new Player();
 	private Enemy enemy = new Enemy();
 
-	private float playerSpeed;
-
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		camera = new CustomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -110,7 +108,7 @@ public class Main extends SimpleBaseGameActivity {
 		final Sprite horizontalControl = new Sprite(0, 570, xSize, ySize, horizontalControlTexture,
 				this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
-				playerSpeed = 0;
+				float playerSpeed = 0;
 				if (!touchEvent.isActionUp()) {
 					if (X < (xSize / 2)) {
 						playerSpeed = (xSize / 2) - X;
@@ -123,7 +121,7 @@ public class Main extends SimpleBaseGameActivity {
 					playerSpeed = 0;
 				}
 				autoParallaxBackground.setParallaxChangePerSecond(playerSpeed / 5);
-				player.getPhysicsHandler().setVelocity(playerSpeed * 2, 0);
+				player.run(playerSpeed);
 				Log.w("debug", "horizontal control clicked: X: '" + X + "' Y: '" + Y + "'");
 				return true;
 			};
