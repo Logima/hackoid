@@ -2,6 +2,9 @@ package fi.hackoid;
 
 import org.andengine.engine.handler.physics.PhysicsHandler;
 import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.extension.physics.box2d.PhysicsConnector;
+import org.andengine.extension.physics.box2d.PhysicsFactory;
+import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -10,12 +13,16 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import android.util.Log;
 
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+
 public class Player {
 
 	private BitmapTextureAtlas textureAtlas;
 	private TiledTextureRegion textureRegion;
 
-	private PhysicsHandler physicsHandler;
+	private PhysicsHandler playerPhysicsHandler;
 
 	private AnimatedSprite animatedSprite;
 
@@ -24,6 +31,8 @@ public class Player {
 	private boolean facingRight = true;
 	
 	private Main context;
+	
+	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
 	public Player() {
 	}
@@ -36,7 +45,7 @@ public class Player {
 		textureAtlas.load();
 	}
 
-	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, int cameraWidth, int cameraHeight) {
+	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, int cameraWidth, int cameraHeight, PhysicsWorld world) {
 		final float playerX = (cameraWidth - textureRegion.getWidth()) / 2;
 		final float playerY = cameraHeight - textureRegion.getHeight() - 5;
 
@@ -46,12 +55,18 @@ public class Player {
 
 		animatedSprite.setCurrentTileIndex(0);
 
-		physicsHandler = new PhysicsHandler(animatedSprite);
-		animatedSprite.registerUpdateHandler(physicsHandler);
+		playerPhysicsHandler = new PhysicsHandler(animatedSprite);
+		animatedSprite.registerUpdateHandler(playerPhysicsHandler);
+		
+		
+		final Body body;
+		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
+		
+		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
 	}
 
 	public void run(float speed) {
-		physicsHandler.setVelocity(speed * 2, 0);
+		playerPhysicsHandler.setVelocity(speed * 2, 0);
 
 		if (speed == 0) {
 			animatedSprite.stopAnimation();
@@ -77,7 +92,7 @@ public class Player {
 }
 
 	public PhysicsHandler getPhysicsHandler() {
-		return physicsHandler;
+		return playerPhysicsHandler;
 	}
 
 	public AnimatedSprite getAnimatedSprite() {

@@ -5,11 +5,13 @@ import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
+import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
@@ -19,6 +21,8 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import android.hardware.SensorManager;
 import android.util.Log;
@@ -97,18 +101,30 @@ public class Main extends SimpleBaseGameActivity {
 				- this.mParallaxLayerFront.getHeight(), this.mParallaxLayerFront, vertexBufferObjectManager)));
 		scene.setBackground(autoParallaxBackground);
 
-		player.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT);
-		enemy.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT);
-
 		createControllers();
-
-		scene.attachChild(player.getAnimatedSprite());
-		scene.attachChild(enemy.getAnimatedSprite());
 
 		camera.setChaseEntity(player.getAnimatedSprite());
 		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
 		
 		this.world = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
+		
+		player.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT, world);
+		enemy.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT, world);
+		
+		final Rectangle ground = new Rectangle(0, 500, CAMERA_WIDTH, 10, vertexBufferObjectManager);
+		
+		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
+		
+		PhysicsFactory.createBoxBody(this.world, ground, BodyType.StaticBody, wallFixtureDef);
+		
+		scene.attachChild(ground);
+		
+		scene.registerUpdateHandler(this.world);
+		
+
+		
+		scene.attachChild(player.getAnimatedSprite());
+		scene.attachChild(enemy.getAnimatedSprite());
 		
 		return scene;
 	}

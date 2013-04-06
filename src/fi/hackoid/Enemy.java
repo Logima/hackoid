@@ -2,11 +2,18 @@ package fi.hackoid;
 
 import org.andengine.engine.handler.physics.PhysicsHandler;
 import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.extension.physics.box2d.PhysicsConnector;
+import org.andengine.extension.physics.box2d.PhysicsFactory;
+import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Enemy {
 
@@ -16,6 +23,8 @@ public class Enemy {
 	private PhysicsHandler physicsHandler;
 
 	private AnimatedSprite animatedSprite;
+	
+	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
 	public Enemy() {
 	}
@@ -27,7 +36,7 @@ public class Enemy {
 		textureAtlas.load();
 	}
 
-	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, int cameraWidth, int cameraHeight) {
+	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, int cameraWidth, int cameraHeight, PhysicsWorld world) {
 		/*
 		 * Calculate the coordinates for the face, so its centered on the
 		 * camera.
@@ -46,6 +55,11 @@ public class Enemy {
 		physicsHandler = new PhysicsHandler(animatedSprite);
 		physicsHandler.setVelocity(-10 * 2, 0);
 		animatedSprite.registerUpdateHandler(physicsHandler);
+		
+		final Body body;
+		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
+		
+		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
 	}
 
 	public PhysicsHandler getPhysicsHandler() {
