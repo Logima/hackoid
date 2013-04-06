@@ -27,8 +27,6 @@ public class Player {
 
 	private boolean facingRight = true;
 
-	private Main context;
-
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
 	private long[] frameTimes = new long[] { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
@@ -40,7 +38,6 @@ public class Player {
 	}
 
 	public void createResources(Main main) {
-		this.context = main;
 		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
 				"player_walking.png", 0, 0, 10, 4);
@@ -70,11 +67,15 @@ public class Player {
 
 		if (speed == 0) {
 			animatedSprite.stopAnimation();
-			animatedSprite.setCurrentTileIndex(0);
+			if (facingRight) {
+				animatedSprite.setCurrentTileIndex(0);
+			} else {
+				animatedSprite.setCurrentTileIndex(20);
+			}
 		} else if (oldSpeed == 0) {
 			animateRun();
-		} else if (this.facingRight && speed < 0 || !this.facingRight && speed > 0) {
-			this.facingRight = !this.facingRight;
+		} else if (facingRight && speed < 0 || !facingRight && speed > 0) {
+			facingRight = !facingRight;
 			animateRun();
 		}
 
