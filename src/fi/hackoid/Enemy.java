@@ -23,7 +23,7 @@ public class Enemy {
 	public void createResources(Main main) {
 		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 256, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
-				"player_walking_right.png", 0, 0, 11, 2);
+				"player_walking_left.png", 0, 0, 11, 2);
 		textureAtlas.load();
 	}
 
