@@ -100,7 +100,7 @@ public class Main extends SimpleBaseGameActivity {
 	private void createControllers() {
 		HUD yourHud = new HUD();
 
-		final int xSize = 380;
+		final int xSize = 380;	
 		final int ySize = 150;
 
 		final Sprite horizontalControl = new Sprite(0, 570, xSize, ySize, horizontalControlTexture,
@@ -115,7 +115,7 @@ public class Main extends SimpleBaseGameActivity {
 						playerSpeed = X - xSize / 2;
 					}
 				}
-				if (xSize - X < 60 || Y < 40) {
+				if (xSize - X < 100 || Y < 80) {
 					playerSpeed = 0;
 				}
 				autoParallaxBackground.setParallaxChangePerSecond(playerSpeed / 5);
