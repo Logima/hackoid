@@ -33,11 +33,11 @@ public class Main extends SimpleBaseGameActivity {
 	private static final int CAMERA_WIDTH = 1280;
 	private static final int CAMERA_HEIGHT = 720;
 
-	private BitmapTextureAtlas mAutoParallaxBackgroundTexture;
+	private BitmapTextureAtlas backgroundTextureAtlas;
 
-	private ITextureRegion mParallaxLayerBack;
-	private ITextureRegion mParallaxLayerMid;
-	private ITextureRegion mParallaxLayerFront;
+	private ITextureRegion backgroundTextureSky;
+	private ITextureRegion backgroundTextureCity;
+	private ITextureRegion backgroundTextureGround;
 
 	private BitmapTextureAtlas controlTextureAtlas;
 	private ITextureRegion horizontalControlTexture;
@@ -67,14 +67,14 @@ public class Main extends SimpleBaseGameActivity {
 		player.createResources(this);
 		enemy.createResources(this);
 
-		this.mAutoParallaxBackgroundTexture = new BitmapTextureAtlas(this.getTextureManager(), 2048, 2048);
-		this.mParallaxLayerFront = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "background_texture_ground.png", 0, 0);
-		this.mParallaxLayerBack = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "background_texture_sky.png", 0, 100);
-		this.mParallaxLayerMid = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "background_texture_city.png", 0, 820);
-		this.mAutoParallaxBackgroundTexture.load();
+		this.backgroundTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 2048, 2048);
+		this.backgroundTextureGround = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
+				this.backgroundTextureAtlas, this, "background_texture_ground.png", 0, 0);
+		this.backgroundTextureSky = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
+				this.backgroundTextureAtlas, this, "background_texture_sky.png", 0, 100);
+		this.backgroundTextureCity = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
+				this.backgroundTextureAtlas, this, "background_texture_city.png", 0, 820);
+		this.backgroundTextureAtlas.load();
 
 		this.controlTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
 		this.horizontalControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
@@ -94,11 +94,11 @@ public class Main extends SimpleBaseGameActivity {
 		autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 0);
 		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0, CAMERA_HEIGHT
-				- this.mParallaxLayerBack.getHeight(), this.mParallaxLayerBack, vertexBufferObjectManager)));
-		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-5.0f, new Sprite(0, 410, this.mParallaxLayerMid,
+				- this.backgroundTextureSky.getHeight(), this.backgroundTextureSky, vertexBufferObjectManager)));
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-5.0f, new Sprite(0, 410, this.backgroundTextureCity,
 				vertexBufferObjectManager)));
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, CAMERA_HEIGHT
-				- this.mParallaxLayerFront.getHeight(), this.mParallaxLayerFront, vertexBufferObjectManager)));
+				- this.backgroundTextureGround.getHeight(), this.backgroundTextureGround, vertexBufferObjectManager)));
 		scene.setBackground(autoParallaxBackground);
 
 		createControllers();
