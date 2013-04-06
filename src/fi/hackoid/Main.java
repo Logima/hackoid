@@ -75,9 +75,14 @@ public class Main extends SimpleBaseGameActivity {
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 		
-		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 2048, 256, TextureOptions.BILINEAR);
-		this.mPlayerTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "player_walking_right.png", 0, 0, 11, 2);
-		this.mEnemyTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "enemy.png", 73, 0, 3, 4);
+		this.mBitmapTextureAtlas = new BitmapTextureAtlas(
+				this.getTextureManager(), 2048, 256, TextureOptions.BILINEAR);
+		this.mPlayerTextureRegion = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(this.mBitmapTextureAtlas, this,
+						"player_walking_right.png", 0, 0, 11, 2);
+		this.mEnemyTextureRegion = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(this.mBitmapTextureAtlas, this,
+						"enemy.png", 73, 0, 3, 4);
 		this.mBitmapTextureAtlas.load();
 
 		this.mAutoParallaxBackgroundTexture = new BitmapTextureAtlas(
@@ -153,8 +158,10 @@ public class Main extends SimpleBaseGameActivity {
 		player.registerUpdateHandler(playerPhysicsHandler);
 		
 		createControllers(playerPhysicsHandler);
-		
-		final AnimatedSprite enemy = new AnimatedSprite(playerX - 80, playerY + 60, this.mEnemyTextureRegion, vertexBufferObjectManager);
+
+		final AnimatedSprite enemy = new AnimatedSprite(playerX - 80,
+				playerY + 60, this.mEnemyTextureRegion,
+				vertexBufferObjectManager);
 		enemy.setScaleCenterY(this.mEnemyTextureRegion.getHeight());
 		enemy.setScale(2);
 		enemy.animate(new long[] { 200, 200, 200 }, 3, 5, true);
