@@ -18,6 +18,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import android.util.Log;
+import android.view.KeyEvent;
 
 public class Main extends SimpleBaseGameActivity {
 	// ===========================================================
@@ -135,8 +136,21 @@ public class Main extends SimpleBaseGameActivity {
 
 		yourHud.registerTouchArea(horizontalControl);
 		yourHud.attachChild(horizontalControl);
-
 		this.camera.setHUD(yourHud);
+	}
+	
+	@Override
+	public boolean onKeyDown(final int pKeyCode, final KeyEvent pEvent) {
+		if(pKeyCode == KeyEvent.KEYCODE_MENU && pEvent.getAction() == KeyEvent.ACTION_DOWN) {
+			if(mEngine.isRunning()) {
+				mEngine.stop();
+			} else {
+				mEngine.start();
+			}
+			return true;
+		} else {
+			return super.onKeyDown(pKeyCode, pEvent);
+		}
 	}
 	// ===========================================================
 	// Methods
