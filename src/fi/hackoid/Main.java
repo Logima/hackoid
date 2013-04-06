@@ -10,6 +10,7 @@ import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
+import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -17,6 +18,9 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
+import com.badlogic.gdx.math.Vector2;
+
+import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -33,13 +37,17 @@ public class Main extends SimpleBaseGameActivity {
 
 	private BitmapTextureAtlas controlTextureAtlas;
 	private ITextureRegion horizontalControlTexture;
+	private ITextureRegion jumpControlTexture;
+	private ITextureRegion fireControlTexture;
 
 	private Camera camera;
 	private AutoParallaxBackground autoParallaxBackground;
 
 	private Player player = new Player();
 	private Enemy enemy = new Enemy();
-
+	
+	private PhysicsWorld world;
+	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		camera = new CustomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -67,6 +75,10 @@ public class Main extends SimpleBaseGameActivity {
 		this.controlTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
 		this.horizontalControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				this.controlTextureAtlas, this, "touchscreen_horizontal_control.png", 0, 0);
+		this.jumpControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas,
+				this, "touchscreen_button_jump.png", 0, 95);
+		this.fireControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas,
+				this, "touchscreen_button_fire.png", 105, 95);
 		this.controlTextureAtlas.load();
 	}
 
@@ -95,14 +107,16 @@ public class Main extends SimpleBaseGameActivity {
 
 		camera.setChaseEntity(player.getAnimatedSprite());
 		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
-
+		
+		this.world = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
+		
 		return scene;
 	}
 
 	private void createControllers() {
 		HUD yourHud = new HUD();
 
-		final int xSize = 380;	
+		final int xSize = 380;
 		final int ySize = 150;
 
 		final Sprite horizontalControl = new Sprite(0, 570, xSize, ySize, horizontalControlTexture,
@@ -129,6 +143,27 @@ public class Main extends SimpleBaseGameActivity {
 		};
 		yourHud.registerTouchArea(horizontalControl);
 		yourHud.attachChild(horizontalControl);
+
+		final Sprite jumpControl = new Sprite(1175, 510, jumpControlTexture,
+				this.getVertexBufferObjectManager()) {
+			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
+				player.jump();
+				return true;
+			};
+		};
+		yourHud.registerTouchArea(jumpControl);
+		yourHud.attachChild(jumpControl);
+
+		final Sprite fireControl = new Sprite(1175, 615, fireControlTexture,
+				this.getVertexBufferObjectManager()) {
+			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
+				Log.w("debug", "fire pressed");
+				// fire
+				return true;
+			};
+		};
+		yourHud.registerTouchArea(fireControl);
+		yourHud.attachChild(fireControl);
 		this.camera.setHUD(yourHud);
 	}
 
