@@ -10,6 +10,7 @@ import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
+import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -17,6 +18,9 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
+import com.badlogic.gdx.math.Vector2;
+
+import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -41,7 +45,9 @@ public class Main extends SimpleBaseGameActivity {
 
 	private Player player = new Player();
 	private Enemy enemy = new Enemy();
-
+	
+	private PhysicsWorld world;
+	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		camera = new CustomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -101,7 +107,9 @@ public class Main extends SimpleBaseGameActivity {
 
 		camera.setChaseEntity(player.getAnimatedSprite());
 		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
-
+		
+		this.world = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
+		
 		return scene;
 	}
 
