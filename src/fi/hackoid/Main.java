@@ -69,11 +69,11 @@ public class Main extends SimpleBaseGameActivity {
 
 		this.mAutoParallaxBackgroundTexture = new BitmapTextureAtlas(this.getTextureManager(), 2048, 2048);
 		this.mParallaxLayerFront = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "ground_tile_basic.png", 0, 0);
+				this.mAutoParallaxBackgroundTexture, this, "background_texture_ground.png", 0, 0);
 		this.mParallaxLayerBack = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "background.png", 0, 100);
+				this.mAutoParallaxBackgroundTexture, this, "background_texture_sky.png", 0, 100);
 		this.mParallaxLayerMid = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "background_scroller_foreground.png", 0, 820);
+				this.mAutoParallaxBackgroundTexture, this, "background_texture_city.png", 0, 820);
 		this.mAutoParallaxBackgroundTexture.load();
 
 		this.controlTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
