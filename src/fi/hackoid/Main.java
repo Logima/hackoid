@@ -38,6 +38,7 @@ public class Main extends SimpleBaseGameActivity {
 	private AutoParallaxBackground autoParallaxBackground;
 
 	private Player player = new Player();
+	private Enemy enemy = new Enemy();
 
 	private float playerSpeed;
 
@@ -54,6 +55,7 @@ public class Main extends SimpleBaseGameActivity {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
 		player.createResources(this);
+		enemy.createResources(this);
 
 		this.mAutoParallaxBackgroundTexture = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
 		this.mParallaxLayerFront = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
@@ -86,10 +88,12 @@ public class Main extends SimpleBaseGameActivity {
 		scene.setBackground(autoParallaxBackground);
 
 		player.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT);
+		enemy.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		createControllers();
 
 		scene.attachChild(player.getAnimatedSprite());
+		scene.attachChild(enemy.getAnimatedSprite());
 
 		camera.setChaseEntity(player.getAnimatedSprite());
 		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
