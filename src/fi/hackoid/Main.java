@@ -44,6 +44,8 @@ public class Main extends SimpleBaseGameActivity {
 	private Camera camera;
 
 	private Player player = new Player();
+	
+	private float playerSpeed;
 
 	// ===========================================================
 	// Constructors
@@ -113,27 +115,30 @@ public class Main extends SimpleBaseGameActivity {
 	private void createControllers() {
 		HUD yourHud = new HUD();
 
-		final int xSize = 340;
-		final int ySize = 110;
+		final int xSize = 380;
+		final int ySize = 150;
 
-		final Sprite horizontalControl = new Sprite(0, 610, xSize, ySize, horizontalControlTexture,
+		final Sprite horizontalControl = new Sprite(0, 570, xSize, ySize, horizontalControlTexture,
 				this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
-				float speed = 0;
+				playerSpeed = 0;
 				if (!touchEvent.isActionUp()) {
 					if (X < (xSize / 2)) {
-						speed = (xSize / 2) - X;
-						speed = -speed;
+						playerSpeed = (xSize / 2) - X;
+						playerSpeed = -playerSpeed;
 					} else {
-						speed = X - xSize / 2;
+						playerSpeed = X - xSize / 2;
 					}
 				}
-				player.getPhysicsHandler().setVelocity(speed * 2, 0);
+				if(xSize - X < 60 || Y < 40)
+				{
+					playerSpeed = 0;
+				}
+				player.getPhysicsHandler().setVelocity(playerSpeed * 2, 0);
 				Log.w("debug", "horizontal control clicked: X: '" + X + "' Y: '" + Y + "'");
 				return true;
 			};
 		};
-
 		yourHud.registerTouchArea(horizontalControl);
 		yourHud.attachChild(horizontalControl);
 		this.camera.setHUD(yourHud);
