@@ -8,6 +8,8 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import android.util.Log;
+
 public class Player {
 
 	private BitmapTextureAtlas textureAtlas;
@@ -63,6 +65,10 @@ public class Player {
 
 	public AnimatedSprite getAnimatedSprite() {
 		return animatedSprite;
+	}
+
+	public void jump() {
+		Log.w("debug", "jump pressed");
 	}
 
 }

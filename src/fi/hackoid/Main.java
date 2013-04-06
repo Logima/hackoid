@@ -33,6 +33,8 @@ public class Main extends SimpleBaseGameActivity {
 
 	private BitmapTextureAtlas controlTextureAtlas;
 	private ITextureRegion horizontalControlTexture;
+	private ITextureRegion jumpControlTexture;
+	private ITextureRegion fireControlTexture;
 
 	private Camera camera;
 	private AutoParallaxBackground autoParallaxBackground;
@@ -67,6 +69,10 @@ public class Main extends SimpleBaseGameActivity {
 		this.controlTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
 		this.horizontalControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				this.controlTextureAtlas, this, "touchscreen_horizontal_control.png", 0, 0);
+		this.jumpControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas,
+				this, "touchscreen_button_jump.png", 0, 95);
+		this.fireControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas,
+				this, "touchscreen_button_fire.png", 105, 95);
 		this.controlTextureAtlas.load();
 	}
 
@@ -102,7 +108,7 @@ public class Main extends SimpleBaseGameActivity {
 	private void createControllers() {
 		HUD yourHud = new HUD();
 
-		final int xSize = 380;	
+		final int xSize = 380;
 		final int ySize = 150;
 
 		final Sprite horizontalControl = new Sprite(0, 570, xSize, ySize, horizontalControlTexture,
@@ -129,6 +135,27 @@ public class Main extends SimpleBaseGameActivity {
 		};
 		yourHud.registerTouchArea(horizontalControl);
 		yourHud.attachChild(horizontalControl);
+
+		final Sprite jumpControl = new Sprite(1175, 510, jumpControlTexture,
+				this.getVertexBufferObjectManager()) {
+			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
+				player.jump();
+				return true;
+			};
+		};
+		yourHud.registerTouchArea(jumpControl);
+		yourHud.attachChild(jumpControl);
+
+		final Sprite fireControl = new Sprite(1175, 615, fireControlTexture,
+				this.getVertexBufferObjectManager()) {
+			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
+				Log.w("debug", "fire pressed");
+				// fire
+				return true;
+			};
+		};
+		yourHud.registerTouchArea(fireControl);
+		yourHud.attachChild(fireControl);
 		this.camera.setHUD(yourHud);
 	}
 
