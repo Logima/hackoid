@@ -29,8 +29,9 @@ public class Player {
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
-	private long[] frameTimes = new long[] { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-			100, 100, 100, 100 };
+	private int frameTime = 50;
+	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
+			frameTime, frameTime, frameTime, frameTime };
 
 	Body body;
 
