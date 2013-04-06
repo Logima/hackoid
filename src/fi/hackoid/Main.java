@@ -60,8 +60,10 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 	public EngineOptions onCreateEngineOptions() {
 		camera = new CustomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
-		return new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH,
+		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH,
 				CAMERA_HEIGHT), camera);
+		engineOptions.getTouchOptions().setNeedsMultiTouch(true);
+		return engineOptions;
 	}
 
 	@Override
