@@ -24,8 +24,8 @@ public class Enemy {
 	Body body;
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-
-	private long[] frameTimes = new long[] { 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 100,
+	
+	private long[] frameTimes = new long[] { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
 			100, 100, 100, 100 };
 
 	public Enemy() {
