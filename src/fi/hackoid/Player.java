@@ -67,7 +67,7 @@ public class Player {
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
 		
 		
-		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
+		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, false));
 	}
 
 	public void run(float speed) {

@@ -65,7 +65,7 @@ public class Enemy {
 		
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
 		
-		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
+		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, false));
 		
 		body.setLinearVelocity(-10 * 2, 0);
 	}
