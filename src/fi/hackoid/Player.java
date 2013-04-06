@@ -20,11 +20,16 @@ public class Player {
 	private AnimatedSprite animatedSprite;
 
 	private float oldSpeed;
+	
+	private boolean facingRight = true;
+	
+	private Main context;
 
 	public Player() {
 	}
 
 	public void createResources(Main main) {
+		this.context = main;
 		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 256, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
 				"player_walking_right.png", 0, 0, 11, 2);
@@ -54,10 +59,22 @@ public class Player {
 		} else if (oldSpeed == 0) {
 			long[] frameTimes = new long[] { 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 100, 100, 100, 100,
 					100, 100, 100, 100, 0 };
-			animatedSprite.animate(frameTimes, 0, 21, true);
+			animatedSprite.animate(frameTimes, 0, 21, true);			
 		}
+		
+		if (this.facingRight && speed < 0 || !this.facingRight && speed > 0) {
+			this.facingRight = !this.facingRight;
+			toggleDirection();
+		}
+		
 		oldSpeed = speed;
 	}
+	
+	private void toggleDirection() {
+		this.textureAtlas.clearTextureAtlasSources();
+		BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, this.context,
+				this.facingRight ? "player_walking_right.png" : "player_walking_left.png", 0, 0, 11, 2);
+}
 
 	public PhysicsHandler getPhysicsHandler() {
 		return physicsHandler;
