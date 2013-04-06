@@ -6,6 +6,7 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.primitive.Rectangle;
+import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
@@ -13,6 +14,9 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.extension.physics.box2d.util.Vector2Pool;
+import org.andengine.input.sensor.acceleration.AccelerationData;
+import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -28,16 +32,16 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.KeyEvent;
 
-public class Main extends SimpleBaseGameActivity {
+public class Main extends SimpleBaseGameActivity implements IAccelerationListener {
 
 	private static final int CAMERA_WIDTH = 1280;
 	private static final int CAMERA_HEIGHT = 720;
 
-	private BitmapTextureAtlas mAutoParallaxBackgroundTexture;
+	private BitmapTextureAtlas backgroundTextureAtlas;
 
-	private ITextureRegion mParallaxLayerBack;
-	private ITextureRegion mParallaxLayerMid;
-	private ITextureRegion mParallaxLayerFront;
+	private ITextureRegion backgroundTextureSky;
+	private ITextureRegion backgroundTextureCity;
+	private ITextureRegion backgroundTextureGround;
 
 	private BitmapTextureAtlas controlTextureAtlas;
 	private ITextureRegion horizontalControlTexture;
@@ -67,14 +71,14 @@ public class Main extends SimpleBaseGameActivity {
 		player.createResources(this);
 		enemy.createResources(this);
 
-		this.mAutoParallaxBackgroundTexture = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
-		this.mParallaxLayerFront = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "parallax_background_layer_front.png", 0, 0);
-		this.mParallaxLayerBack = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "parallax_background_layer_back.png", 0, 188);
-		this.mParallaxLayerMid = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.mAutoParallaxBackgroundTexture, this, "parallax_background_layer_mid.png", 0, 669);
-		this.mAutoParallaxBackgroundTexture.load();
+		this.backgroundTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 2048, 2048);
+		this.backgroundTextureGround = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
+				this.backgroundTextureAtlas, this, "background_texture_ground.png", 0, 0);
+		this.backgroundTextureSky = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
+				this.backgroundTextureAtlas, this, "background_texture_sky.png", 0, 100);
+		this.backgroundTextureCity = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
+				this.backgroundTextureAtlas, this, "background_texture_city.png", 0, 820);
+		this.backgroundTextureAtlas.load();
 
 		this.controlTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
 		this.horizontalControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
@@ -94,24 +98,30 @@ public class Main extends SimpleBaseGameActivity {
 		autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 0);
 		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0, CAMERA_HEIGHT
-				- this.mParallaxLayerBack.getHeight(), this.mParallaxLayerBack, vertexBufferObjectManager)));
-		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-5.0f, new Sprite(0, 80, this.mParallaxLayerMid,
+				- this.backgroundTextureSky.getHeight(), this.backgroundTextureSky, vertexBufferObjectManager)));
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-5.0f, new Sprite(0, 410, this.backgroundTextureCity,
 				vertexBufferObjectManager)));
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, CAMERA_HEIGHT
-				- this.mParallaxLayerFront.getHeight(), this.mParallaxLayerFront, vertexBufferObjectManager)));
+				- this.backgroundTextureGround.getHeight(), this.backgroundTextureGround, vertexBufferObjectManager)));
 		scene.setBackground(autoParallaxBackground);
 
 		createControllers();
+		
 
-		camera.setChaseEntity(player.getAnimatedSprite());
-		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
+
 		
 		this.world = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
 		
 		player.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT, world);
 		enemy.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT, world);
 		
-		final Rectangle ground = new Rectangle(0, 500, CAMERA_WIDTH, 10, vertexBufferObjectManager);
+		scene.attachChild(player.getAnimatedSprite());
+		scene.attachChild(enemy.getAnimatedSprite());
+		
+		camera.setChaseEntity(player.getAnimatedSprite());
+		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
+		
+		final Rectangle ground = new Rectangle(-200, 500, 99999999, 10, vertexBufferObjectManager);
 		
 		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
 		
@@ -123,8 +133,7 @@ public class Main extends SimpleBaseGameActivity {
 		
 
 		
-		scene.attachChild(player.getAnimatedSprite());
-		scene.attachChild(enemy.getAnimatedSprite());
+
 		
 		return scene;
 	}
@@ -182,6 +191,13 @@ public class Main extends SimpleBaseGameActivity {
 		yourHud.attachChild(fireControl);
 		this.camera.setHUD(yourHud);
 	}
+	
+	@Override
+	public void onAccelerationChanged(final AccelerationData pAccelerationData) {
+		final Vector2 gravity = Vector2Pool.obtain(pAccelerationData.getX(), pAccelerationData.getY());
+		this.world.setGravity(gravity);
+		Vector2Pool.recycle(gravity);
+	}
 
 	@Override
 	public boolean onKeyDown(final int pKeyCode, final KeyEvent pEvent) {
@@ -195,5 +211,11 @@ public class Main extends SimpleBaseGameActivity {
 		} else {
 			return super.onKeyDown(pKeyCode, pEvent);
 		}
+	}
+
+	@Override
+	public void onAccelerationAccuracyChanged(AccelerationData pAccelerationData) {
+		// TODO Auto-generated method stub
+		
 	}
 }
