@@ -114,12 +114,13 @@ public class Main extends SimpleBaseGameActivity {
 						playerSpeed = (xSize / 2) - X;
 						playerSpeed = -playerSpeed;
 					} else {
-						playerSpeed = X - xSize / 2;
+						playerSpeed = (X - xSize / 2) + 100;
 					}
 				}
 				if (xSize - X < 100 || Y < 80) {
 					playerSpeed = 0;
 				}
+				playerSpeed *= 0.75;
 				autoParallaxBackground.setParallaxChangePerSecond(playerSpeed / 5);
 				player.run(playerSpeed);
 				Log.w("debug", "horizontal control clicked: X: '" + X + "' Y: '" + Y + "'");
