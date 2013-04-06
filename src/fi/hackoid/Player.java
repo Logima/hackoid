@@ -22,7 +22,7 @@ public class Player {
 	private BitmapTextureAtlas textureAtlas;
 	private TiledTextureRegion textureRegion;
 
-	private PhysicsHandler playerPhysicsHandler;
+	//private PhysicsHandler playerPhysicsHandler;
 
 	private AnimatedSprite animatedSprite;
 
@@ -33,6 +33,8 @@ public class Player {
 	private Main context;
 	
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+	
+	Body body;
 
 	public Player() {
 	}
@@ -46,8 +48,11 @@ public class Player {
 	}
 
 	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, int cameraWidth, int cameraHeight, PhysicsWorld world) {
-		final float playerX = (cameraWidth - textureRegion.getWidth()) / 2;
-		final float playerY = cameraHeight - textureRegion.getHeight() - 5;
+		//final float playerX = (cameraWidth - textureRegion.getWidth()) / 2;
+		//final float playerY = cameraHeight - textureRegion.getHeight() - 5;
+		
+		final float playerX  = 100;
+		final float playerY = 200;
 
 		animatedSprite = new AnimatedSprite(playerX, playerY, textureRegion, vertexBufferObjectManager);
 		animatedSprite.setScaleCenterY(textureRegion.getHeight());
@@ -55,18 +60,19 @@ public class Player {
 
 		animatedSprite.setCurrentTileIndex(0);
 
-		playerPhysicsHandler = new PhysicsHandler(animatedSprite);
-		animatedSprite.registerUpdateHandler(playerPhysicsHandler);
+		//playerPhysicsHandler = new PhysicsHandler(animatedSprite);
+		animatedSprite.registerUpdateHandler(world);
 		
 		
-		final Body body;
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
+		
 		
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
 	}
 
 	public void run(float speed) {
-		playerPhysicsHandler.setVelocity(speed * 2, 0);
+		body.setLinearVelocity(speed / 20, 0);
+		
 
 		if (speed == 0) {
 			animatedSprite.stopAnimation();
@@ -91,8 +97,8 @@ public class Player {
 				this.facingRight ? "player_walking_right.png" : "player_walking_left.png", 0, 0, 11, 2);
 }
 
-	public PhysicsHandler getPhysicsHandler() {
-		return playerPhysicsHandler;
+	public Body getPhysicsBody() {
+		return body;
 	}
 
 	public AnimatedSprite getAnimatedSprite() {

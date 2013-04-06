@@ -20,9 +20,11 @@ public class Enemy {
 	private BitmapTextureAtlas textureAtlas;
 	private TiledTextureRegion textureRegion;
 
-	private PhysicsHandler physicsHandler;
+	//private PhysicsHandler physicsHandler;
 
 	private AnimatedSprite animatedSprite;
+	
+	Body body;
 	
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
@@ -41,8 +43,11 @@ public class Enemy {
 		 * Calculate the coordinates for the face, so its centered on the
 		 * camera.
 		 */
-		final float playerX = cameraWidth - textureRegion.getWidth();
-		final float playerY = cameraHeight - textureRegion.getHeight();
+		//final float playerX = cameraWidth - textureRegion.getWidth();
+		//final float playerY = cameraHeight - textureRegion.getHeight();
+		
+		float playerX = 500;
+		float playerY = 200;
 		
 		animatedSprite = new AnimatedSprite(playerX, playerY, textureRegion, vertexBufferObjectManager);
 		animatedSprite.setScaleCenterY(textureRegion.getHeight());
@@ -52,18 +57,21 @@ public class Enemy {
 				100, 100, 100, 100, 0 };
 		animatedSprite.animate(frameTimes, 0, 21, true);
 
-		physicsHandler = new PhysicsHandler(animatedSprite);
-		physicsHandler.setVelocity(-10 * 2, 0);
-		animatedSprite.registerUpdateHandler(physicsHandler);
 		
-		final Body body;
+		
+		
+		animatedSprite.registerUpdateHandler(world);
+		
+		
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
 		
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
+		
+		body.setLinearVelocity(-10 * 2, 0);
 	}
 
-	public PhysicsHandler getPhysicsHandler() {
-		return physicsHandler;
+	public Body getPhysicsBody() {
+		return body;
 	}
 
 	public AnimatedSprite getAnimatedSprite() {
