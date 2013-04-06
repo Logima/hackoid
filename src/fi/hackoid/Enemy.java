@@ -47,7 +47,7 @@ public class Enemy {
 		animatedSprite.setScaleCenterY(textureRegion.getHeight());
 		animatedSprite.setScale(1);
 
-		animatedSprite.animate(frameTimes, 0, 19, true);
+		animatedSprite.animate(frameTimes, 20, 39, true);
 
 		animatedSprite.registerUpdateHandler(world);
 
