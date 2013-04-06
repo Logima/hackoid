@@ -32,7 +32,7 @@ public class Enemy {
 	}
 
 	public void createResources(Main main) {
-		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 256, TextureOptions.BILINEAR);
+		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 4096, 512, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
 				"monster_teekkari_walking_left.png", 0, 0, 11, 2);
 		textureAtlas.load();
@@ -65,7 +65,7 @@ public class Enemy {
 		
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
 		
-		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
+		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, false));
 		
 		body.setLinearVelocity(-10 * 2, 0);
 	}
