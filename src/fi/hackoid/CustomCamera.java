@@ -22,7 +22,7 @@ public class CustomCamera extends Camera {
 		if (mChaseEntity != null) {
 			final float[] centerCoordinates = this.mChaseEntity.getSceneCenterCoordinates();
 			this.setCenter(centerCoordinates[Constants.VERTEX_INDEX_X],
-					centerCoordinates[Constants.VERTEX_INDEX_Y] - 260);
+					this.getCenterY());
 		}
 	}
 

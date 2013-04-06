@@ -41,7 +41,7 @@ public class Player {
 
 	public void createResources(Main main) {
 		this.context = main;
-		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 256, TextureOptions.BILINEAR);
+		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 4096, 512, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
 				"player_walking_right.png", 0, 0, 11, 2);
 		textureAtlas.load();
@@ -71,7 +71,7 @@ public class Player {
 	}
 
 	public void run(float speed) {
-		body.setLinearVelocity(speed / 20, 0);
+		body.setLinearVelocity(speed / 20, body.getLinearVelocity().y);
 		
 
 		if (speed == 0) {
@@ -106,7 +106,10 @@ public class Player {
 	}
 
 	public void jump() {
-		Log.w("debug", "jump pressed");
+		Log.w("debug", "jump pressed " + animatedSprite.getY());
+		if (animatedSprite.getY() > 290) {
+			body.setLinearVelocity(body.getLinearVelocity().x, -15);
+		}
 	}
 
 }

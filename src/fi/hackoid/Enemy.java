@@ -32,7 +32,7 @@ public class Enemy {
 	}
 
 	public void createResources(Main main) {
-		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 256, TextureOptions.BILINEAR);
+		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 4096, 512, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
 				"monster_teekkari_walking_left.png", 0, 0, 11, 2);
 		textureAtlas.load();

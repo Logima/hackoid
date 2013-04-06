@@ -75,18 +75,18 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		this.backgroundTextureGround = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				this.backgroundTextureAtlas, this, "background_texture_ground.png", 0, 0);
 		this.backgroundTextureSky = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.backgroundTextureAtlas, this, "background_texture_sky.png", 0, 100);
+				this.backgroundTextureAtlas, this, "background_texture_sky.png", 0, 200);
 		this.backgroundTextureCity = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				this.backgroundTextureAtlas, this, "background_texture_city.png", 0, 820);
+				this.backgroundTextureAtlas, this, "background_texture_city.png", 0, 920);
 		this.backgroundTextureAtlas.load();
 
 		this.controlTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
 		this.horizontalControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				this.controlTextureAtlas, this, "touchscreen_horizontal_control.png", 0, 0);
 		this.jumpControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas,
-				this, "touchscreen_button_jump.png", 0, 95);
+				this, "touchscreen_button_jump.png", 0, 190);
 		this.fireControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas,
-				this, "touchscreen_button_fire.png", 105, 95);
+				this, "touchscreen_button_fire.png", 210, 190);
 		this.controlTextureAtlas.load();
 	}
 
@@ -99,7 +99,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0, CAMERA_HEIGHT
 				- this.backgroundTextureSky.getHeight(), this.backgroundTextureSky, vertexBufferObjectManager)));
-		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-5.0f, new Sprite(0, 410, this.backgroundTextureCity,
+		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-5.0f, new Sprite(0, 300, this.backgroundTextureCity,
 				vertexBufferObjectManager)));
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, CAMERA_HEIGHT
 				- this.backgroundTextureGround.getHeight(), this.backgroundTextureGround, vertexBufferObjectManager)));
@@ -169,7 +169,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		yourHud.registerTouchArea(horizontalControl);
 		yourHud.attachChild(horizontalControl);
 
-		final Sprite jumpControl = new Sprite(1175, 510, jumpControlTexture,
+		final Sprite jumpControl = new Sprite(1070, 300, jumpControlTexture,
 				this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
 				player.jump();
@@ -179,7 +179,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		yourHud.registerTouchArea(jumpControl);
 		yourHud.attachChild(jumpControl);
 
-		final Sprite fireControl = new Sprite(1175, 615, fireControlTexture,
+		final Sprite fireControl = new Sprite(1070, 510, fireControlTexture,
 				this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
 				Log.w("debug", "fire pressed");
