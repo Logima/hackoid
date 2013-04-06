@@ -10,6 +10,7 @@ import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -39,6 +40,9 @@ public class Main extends SimpleBaseGameActivity {
 	private ITextureRegion mParallaxLayerBack;
 	private ITextureRegion mParallaxLayerMid;
 	private ITextureRegion mParallaxLayerFront;
+
+	private BitmapTextureAtlas controlTextureAtlas;
+	private ITextureRegion horizontalControlTexture;
 
 	// ===========================================================
 	// Constructors
@@ -73,6 +77,10 @@ public class Main extends SimpleBaseGameActivity {
 		this.mParallaxLayerBack = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mAutoParallaxBackgroundTexture, this, "parallax_background_layer_back.png", 0, 188);
 		this.mParallaxLayerMid = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mAutoParallaxBackgroundTexture, this, "parallax_background_layer_mid.png", 0, 669);
 		this.mAutoParallaxBackgroundTexture.load();
+
+		this.controlTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024);
+		this.horizontalControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas, this, "touchscreen_horizontal_control.png", 0, 0);
+		this.controlTextureAtlas.load();
 	}
 
 	@Override
@@ -104,6 +112,16 @@ public class Main extends SimpleBaseGameActivity {
 
 		scene.attachChild(player);
 		scene.attachChild(enemy);
+
+		final Sprite horizontalControl = new Sprite(0, 665, horizontalControlTexture, this.getVertexBufferObjectManager()) {
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+
+				return true;
+			}
+		};
+		scene.attachChild(horizontalControl);
+		scene.registerTouchArea(horizontalControl);
 
 		return scene;
 	}
