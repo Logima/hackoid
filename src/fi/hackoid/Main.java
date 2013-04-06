@@ -2,6 +2,7 @@ package fi.hackoid;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -94,7 +95,23 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 	@Override
 	public Scene onCreateScene() {
-		this.mEngine.registerUpdateHandler(new FPSLogger());
+		
+		IUpdateHandler iUpdate = new IUpdateHandler(){
+			@Override
+			public void onUpdate(float pSecondsElapsed) {
+				// TODO Auto-generated method stub
+				enemy.getPhysicsBody().setLinearVelocity(new Vector2(-1,0));
+				
+			}
+
+			@Override
+			public void reset() {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		this.mEngine.registerUpdateHandler(iUpdate);
 
 		final Scene scene = new Scene();
 		autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 0);
@@ -123,7 +140,8 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		camera.setChaseEntity(player.getAnimatedSprite());
 		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
 		
-		final Rectangle ground = new Rectangle(-200, 500, 99999999, 10, vertexBufferObjectManager);
+		final Rectangle ground = new Rectangle(-99999, 327, 99999999, 10, vertexBufferObjectManager);
+		ground.setColor(0,0,0,0);
 		
 		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
 		
