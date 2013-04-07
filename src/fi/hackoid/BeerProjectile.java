@@ -1,5 +1,7 @@
 package fi.hackoid;
 
+import java.util.Random;
+
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -24,12 +26,22 @@ public class BeerProjectile {
 	Body body;
 	Main main;
 
-	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0f);
+	boolean throwedByPlayer;
 
-	public BeerProjectile(Main main, PhysicsWorld world, Enemy enemy) {
+	private Random random = new Random();
+
+	private static FixtureDef FIXTURE_DEF_PLAYER = PhysicsFactory.createFixtureDef(1, 0.5f, 0f);
+	private static FixtureDef FIXTURE_DEF_ENEMY = PhysicsFactory.createFixtureDef(1, 0.5f, 0f);
+	static {
+		FIXTURE_DEF_PLAYER.filter.groupIndex = -2;
+		FIXTURE_DEF_ENEMY.filter.groupIndex = -4;
+	}
+
+	public BeerProjectile(Main main, PhysicsWorld world, AnimatedSprite sprite, boolean right, boolean throwedByPlayer) {
+		this.throwedByPlayer = throwedByPlayer;
 		createResources(main);
-		createScene(main.getVertexBufferObjectManager(), world, enemy);
-		main.getScene().attachChild(animatedSprite);
+		createScene(main.getVertexBufferObjectManager(), world, sprite, right);
+		main.scene.attachChild(animatedSprite);
 		synchronized (main.beers) {
 			main.beers.add(this);
 		}
@@ -43,10 +55,10 @@ public class BeerProjectile {
 		textureAtlas.load();
 	}
 
-	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, PhysicsWorld world, Enemy enemy) {
-		AnimatedSprite enemySprite = enemy.getAnimatedSprite();
-		float projectileX = enemySprite.getX();
-		float projectileY = enemySprite.getY();
+	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, PhysicsWorld world,
+			AnimatedSprite sprite, boolean right) {
+		float projectileX = sprite.getX() + sprite.getWidth() / 2;
+		float projectileY = sprite.getY();
 
 		animatedSprite = new AnimatedSprite(projectileX, projectileY, textureRegion, vertexBufferObjectManager);
 		animatedSprite.setScaleCenterY(textureRegion.getHeight());
@@ -56,14 +68,19 @@ public class BeerProjectile {
 
 		animatedSprite.registerUpdateHandler(world);
 
-		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
+		if (throwedByPlayer) {
+			body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF_PLAYER);
+		} else {
+			body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF_ENEMY);
+		}
 		body.setUserData("beer");
 
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
 
-		body.setLinearDamping(2f);
-		body.setLinearVelocity(-20, -20);
-
+		body.setGravityScale(0.1f);
+		body.setLinearDamping(0.05f);
+		body.setLinearVelocity(1 + random.nextInt(5) * (right ? 1 : -1), -random.nextInt(5));
+		body.applyAngularImpulse((random.nextFloat() - 0.5f) * 15);
 	}
 
 	public void destroy() {

@@ -10,8 +10,6 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-import android.util.Log;
-
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -21,13 +19,13 @@ public class Player {
 	private BitmapTextureAtlas textureAtlas;
 	private TiledTextureRegion textureRegion;
 
-	private AnimatedSprite animatedSprite;
+	AnimatedSprite animatedSprite;
 
 	private float oldSpeed;
 
-	private boolean facingRight = true;
+	boolean facingRight = true;
 
-	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
 	private int frameTime = 50;
 	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
@@ -58,6 +56,7 @@ public class Player {
 
 		animatedSprite.registerUpdateHandler(world);
 
+		FIXTURE_DEF.filter.groupIndex = -2;
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
 		body.setUserData("player");
 
@@ -92,16 +91,7 @@ public class Player {
 		}
 	}
 
-	public Body getPhysicsBody() {
-		return body;
-	}
-
-	public AnimatedSprite getAnimatedSprite() {
-		return animatedSprite;
-	}
-
 	public void jump() {
-		Log.w("debug", "jump pressed " + animatedSprite.getY());
 		if (Math.abs(body.getLinearVelocity().y) < 0.5) {
 			body.setLinearVelocity(body.getLinearVelocity().x, -15);
 		}
