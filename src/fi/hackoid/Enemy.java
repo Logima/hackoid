@@ -13,6 +13,7 @@ import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
@@ -87,6 +88,9 @@ public class Enemy {
 	public void passOut() {
 		passedOut = true;
 		body.setLinearVelocity(0, 0);
+		Filter fil = body.getFixtureList().get(0).getFilterData();
+		fil.groupIndex = -2;
+		body.getFixtureList().get(0).setFilterData(fil);
 		animatedSprite.stopAnimation(0);
 		animatedSprite.setRotation(270);
 
