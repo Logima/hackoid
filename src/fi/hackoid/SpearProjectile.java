@@ -70,7 +70,7 @@ public class SpearProjectile {
 
 		body.setGravityScale(0.1f);
 		body.setLinearDamping(0.05f);
-		body.setLinearVelocity(1 + random.nextInt(5) * (right ? 1 : -1), -random.nextInt(5));
+		body.setLinearVelocity((1 + random.nextInt(5)) * (right ? 1 : -1), -random.nextInt(5));
 	}
 
 	public void destroy() {

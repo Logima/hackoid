@@ -79,7 +79,7 @@ public class BeerProjectile {
 
 		body.setGravityScale(0.1f);
 		body.setLinearDamping(0.05f);
-		body.setLinearVelocity(1 + random.nextInt(5) * (right ? 1 : -1), -random.nextInt(5));
+		body.setLinearVelocity((1 + random.nextInt(5)) * (right ? 1 : -1), -random.nextInt(5));
 		body.applyAngularImpulse((random.nextFloat() - 0.5f) * 15);
 	}
 
