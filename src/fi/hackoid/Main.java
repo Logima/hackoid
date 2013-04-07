@@ -199,7 +199,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 	private void createControllers() {
 		HUD yourHud = new HUD();
-		stats = new Stats(yourHud);
+		stats = new Stats(yourHud, this.camera);
 		stats.createResources(this);
 		stats.createScene(this.getVertexBufferObjectManager());
 		final int xSize = 380;
