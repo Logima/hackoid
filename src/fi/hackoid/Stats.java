@@ -25,6 +25,8 @@ public class Stats {
 
 	private HUD myHud;
 	private Camera camera;
+	
+	Main main;
 
 	public Stats(HUD h, Camera camera) {
 		myHud = h;
@@ -38,6 +40,8 @@ public class Stats {
 		this.pie = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.textureAtlas, main, "object_pie.png",
 				300, 0);
 		textureAtlas.load();
+		
+		this.main = main;
 	}
 
 	public void createScene(VertexBufferObjectManager vertexBufferObjectManager) {
@@ -63,6 +67,7 @@ public class Stats {
 	public void drinkBeer() {
 		if (drunkness > 4) {
 			Log.e("debug", "Kuolema");
+			main.playerDeath();
 			return;
 		}
 		drunkLevel[drunkness].setVisible(true);
