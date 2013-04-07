@@ -1,5 +1,7 @@
 package fi.hackoid;
 
+import java.util.Random;
+
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -23,6 +25,8 @@ public class BeerProjectile {
 
 	Body body;
 	Main main;
+
+	private Random random = new Random();
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0f);
 
@@ -63,6 +67,7 @@ public class BeerProjectile {
 
 		body.setLinearDamping(2f);
 		body.setLinearVelocity(-20, -20);
+		body.applyAngularImpulse((random.nextFloat() - 0.5f) * 30);
 
 	}
 
