@@ -236,7 +236,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 					if (beer != null) {
 						if ("player".equals(pContact.getFixtureA().getBody().getUserData())
 								|| "player".equals(pContact.getFixtureB().getBody().getUserData())) {
-							// juo
+							stats.drinkBeer();
 						} else {
 							// riko
 						}
