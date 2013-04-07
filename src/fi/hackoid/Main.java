@@ -76,7 +76,7 @@ public class Main extends SimpleBaseGameActivity {
 	PhysicsWorld world;
 
 	private Stats stats;
-	
+
 	private Pie pie;
 
 	private Music mMusic;
@@ -89,6 +89,7 @@ public class Main extends SimpleBaseGameActivity {
 	Set<Enemy> enemies = new HashSet<Enemy>();
 
 	Tree tree;
+	Fuhrer fuhrer;
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -262,6 +263,12 @@ public class Main extends SimpleBaseGameActivity {
 				} else if (tree.x - 1000 > player.animatedSprite.getX()) {
 					tree.setX(tree.x - 2000);
 				}
+
+				if (fuhrer.x + 5250 < player.animatedSprite.getX()) {
+					fuhrer.setX(fuhrer.x + 10500);
+				} else if (fuhrer.x - 5250 > player.animatedSprite.getX()) {
+					fuhrer.setX(fuhrer.x - 10500);
+				}
 			}
 
 			@Override
@@ -285,6 +292,7 @@ public class Main extends SimpleBaseGameActivity {
 		scene.setBackground(autoParallaxBackground);
 
 		tree = new Tree(main, 400);
+		fuhrer = new Fuhrer(main, 3000);
 
 		createControllers();
 
@@ -309,7 +317,7 @@ public class Main extends SimpleBaseGameActivity {
 		scene.attachChild(ground);
 
 		scene.registerUpdateHandler(this.world);
-		
+
 		pie = new Pie(this.main, this.world);
 
 		world.setContactListener(new ContactListener() {
@@ -318,17 +326,17 @@ public class Main extends SimpleBaseGameActivity {
 			public void beginContact(Contact pContact) {
 				String userDataA = (String) pContact.getFixtureA().getBody().getUserData();
 				String userDataB = (String) pContact.getFixtureB().getBody().getUserData();
-				
+
 				if (userDataA == null && userDataB == null) {
 					return;
 				}
-				
-				if ("pie".equals(userDataB) && "player".equals(userDataA) ||
-						"pie".equals(userDataA) && "player".equals(userDataB)) {
+
+				if ("pie".equals(userDataB) && "player".equals(userDataA) || "pie".equals(userDataA)
+						&& "player".equals(userDataB)) {
 					Log.e("debug", "moovaillaan");
 					stats.eatPie();
 					main.pie.move();
-				}	
+				}
 
 				if ("beer".equals(userDataA) || "beer".equals(userDataB)) {
 					BeerProjectile beer;
@@ -385,8 +393,8 @@ public class Main extends SimpleBaseGameActivity {
 		HUD yourHud = new HUD();
 		stats = new Stats(yourHud, this.camera);
 		stats.createResources(this);
-		stats.createScene(this.getVertexBufferObjectManager());		
-		
+		stats.createScene(this.getVertexBufferObjectManager());
+
 		final int xSize = 500;
 		final int ySize = 300;
 
