@@ -121,7 +121,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		
 		MusicFactory.setAssetBasePath("mfx/");
 		try {
-			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "tsarpfSong10min.ogg");
+			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "shortTsarpfSong.ogg");
 			
 			this.mMusic.setLooping(true);
 		} catch (final IOException e) {
