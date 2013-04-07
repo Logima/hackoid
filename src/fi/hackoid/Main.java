@@ -47,7 +47,6 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import android.annotation.SuppressLint;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
-import android.util.Log;
 import android.view.KeyEvent;
 
 public class Main extends SimpleBaseGameActivity {
@@ -75,9 +74,7 @@ public class Main extends SimpleBaseGameActivity {
 
 	PhysicsWorld world;
 
-	private Stats stats;
-
-	private Pie pie;
+	Stats stats;
 
 	private Music mMusic;
 
@@ -318,7 +315,7 @@ public class Main extends SimpleBaseGameActivity {
 
 		scene.registerUpdateHandler(this.world);
 
-		pie = new Pie(this.main, this.world);
+		new Pie(main);
 
 		world.setContactListener(new ContactListener() {
 
@@ -329,13 +326,6 @@ public class Main extends SimpleBaseGameActivity {
 
 				if (userDataA == null && userDataB == null) {
 					return;
-				}
-
-				if ("pie".equals(userDataB) && "player".equals(userDataA) || "pie".equals(userDataA)
-						&& "player".equals(userDataB)) {
-					Log.e("debug", "moovaillaan");
-					stats.eatPie();
-					main.pie.move();
 				}
 
 				if ("beer".equals(userDataA) || "beer".equals(userDataB)) {
