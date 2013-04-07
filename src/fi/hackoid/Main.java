@@ -25,6 +25,7 @@ import org.andengine.entity.sprite.UncoloredSprite;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.shader.PositionTextureCoordinatesShaderProgram;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
@@ -47,6 +48,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import android.annotation.SuppressLint;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
+import android.util.Log;
 import android.view.KeyEvent;
 
 public class Main extends SimpleBaseGameActivity {
@@ -154,7 +156,11 @@ public class Main extends SimpleBaseGameActivity {
 						this.getVertexBufferObjectManager()) {
 					@Override
 					protected void preDraw(final GLState pGLState, final Camera pCamera) {
-						this.setShaderProgram(Blur.RadialBlurShaderProgram.getInstance(stats.drunkness));
+						if (android.os.Build.MODEL.contains("Nexus")) {
+							this.setShaderProgram(PositionTextureCoordinatesShaderProgram.getInstance());
+						} else {
+							this.setShaderProgram(Blur.RadialBlurShaderProgram.getInstance(stats.drunkness));
+						}
 						super.preDraw(pGLState, pCamera);
 
 						GLES20.glUniform2f(Blur.RadialBlurShaderProgram.sUniformRadialBlurCenterLocation,
