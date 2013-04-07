@@ -52,6 +52,7 @@ public class Enemy {
 		animatedSprite.registerUpdateHandler(world);
 
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
+		body.setUserData("enemy");
 
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, false));
 
