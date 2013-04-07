@@ -47,6 +47,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import android.annotation.SuppressLint;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
+import android.util.Log;
 import android.view.KeyEvent;
 
 public class Main extends SimpleBaseGameActivity {
@@ -75,6 +76,8 @@ public class Main extends SimpleBaseGameActivity {
 	PhysicsWorld world;
 
 	private Stats stats;
+	
+	private Pie pie;
 
 	private Music mMusic;
 
@@ -296,6 +299,8 @@ public class Main extends SimpleBaseGameActivity {
 		scene.attachChild(ground);
 
 		scene.registerUpdateHandler(this.world);
+		
+		pie = new Pie(this.main, this.world);
 
 		world.setContactListener(new ContactListener() {
 
@@ -303,9 +308,18 @@ public class Main extends SimpleBaseGameActivity {
 			public void beginContact(Contact pContact) {
 				String userDataA = (String) pContact.getFixtureA().getBody().getUserData();
 				String userDataB = (String) pContact.getFixtureB().getBody().getUserData();
+				
 				if (userDataA == null && userDataB == null) {
 					return;
 				}
+				
+				if ("pie".equals(userDataB) && "player".equals(userDataA) ||
+						"pie".equals(userDataA) && "player".equals(userDataB)) {
+					Log.e("debug", "moovaillaan");
+					stats.eatPie();
+					main.pie.move();
+				}	
+
 				if ("beer".equals(userDataA) || "beer".equals(userDataB)) {
 					BeerProjectile beer;
 					if ("beer".equals(userDataA)) {
@@ -361,7 +375,8 @@ public class Main extends SimpleBaseGameActivity {
 		HUD yourHud = new HUD();
 		stats = new Stats(yourHud, this.camera);
 		stats.createResources(this);
-		stats.createScene(this.getVertexBufferObjectManager());
+		stats.createScene(this.getVertexBufferObjectManager());		
+		
 		final int xSize = 500;
 		final int ySize = 300;
 

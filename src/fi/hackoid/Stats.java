@@ -54,7 +54,7 @@ public class Stats {
 		for (int i = 0; i < 4; i++) {
 			Sprite b = new Sprite(xLimit - 90 * i, 2, 160, 80, pie, vertexBufferObjectManager);
 			b.setScale(0.5f);
-			b.setVisible(true);
+			b.setVisible(false);
 			pieLevel[i] = b;
 			myHud.attachChild(b);
 		}
@@ -67,5 +67,26 @@ public class Stats {
 		}
 		drunkLevel[drunkness].setVisible(true);
 		drunkness++;
+	}
+	
+	public void eatPie() {
+		if (pies > 3) {
+			Log.e("debug", "Level UP!");
+			while (pies > 0) {
+				pieLevel[pies].setVisible(false);
+				pies--;
+			}
+			return;
+		} else {
+			pieLevel[pies].setVisible(true);
+			pies++;			
+		}
+		
+		if (drunkness == 0) {
+			Log.e("debug", "No beers");
+			return;
+		}
+		drunkness--;
+		drunkLevel[drunkness].setVisible(false);
 	}
 }
