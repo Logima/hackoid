@@ -70,6 +70,9 @@ public class Main extends SimpleBaseGameActivity {
 	private AutoParallaxBackground autoParallaxBackground;
 	private Main main;
 	Scene scene;
+	
+	BitmapTextureAtlas deathScreenAtlas;
+	ITextureRegion deathScreenTexture;
 
 	Player player = new Player();
 
@@ -91,6 +94,11 @@ public class Main extends SimpleBaseGameActivity {
 
 	Tree tree;
 	Fuhrer fuhrer;
+	DeathScreen deathScreen;
+	
+	boolean playerDead = false;
+	
+	HUD yourHud;
 	Boss boss;
 
 	@Override
@@ -311,6 +319,8 @@ public class Main extends SimpleBaseGameActivity {
 
 		tree = new Tree(main, 400);
 		fuhrer = new Fuhrer(main, 3000);
+		
+		
 
 		createControllers();
 
@@ -421,7 +431,7 @@ public class Main extends SimpleBaseGameActivity {
 	}
 
 	private void createControllers() {
-		HUD yourHud = new HUD();
+		yourHud = new HUD();
 		stats = new Stats(yourHud, this.camera);
 		stats.createResources(this);
 		stats.createScene(this.getVertexBufferObjectManager());
@@ -483,7 +493,7 @@ public class Main extends SimpleBaseGameActivity {
 			if (mEngine.isRunning()) {
 				mEngine.stop();
 				mMusic.pause();
-			} else {
+			} else if(!playerDead){
 				mEngine.start();
 				mMusic.play();
 			}
@@ -516,4 +526,14 @@ public class Main extends SimpleBaseGameActivity {
 		}
 		return null;
 	}
+	
+	public void playerDeath(){
+		playerDead = true;
+		stats.drunkness = 0;
+		deathScreen = new DeathScreen(main, yourHud);
+		
+		mEngine.stop();
+		
+	}
+	
 }
