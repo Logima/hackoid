@@ -12,8 +12,8 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import android.util.Log;
 
 public class Stats {
-	private int drunkness = 0;
-	private int pies = 0;
+	int drunkness = 0;
+	int pies = 0;
 
 	private ITextureRegion bottle;
 	private ITextureRegion pie;

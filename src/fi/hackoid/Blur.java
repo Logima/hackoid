@@ -1,5 +1,7 @@
 package fi.hackoid;
 
+import java.util.ArrayList;
+
 import org.andengine.opengl.shader.ShaderProgram;
 import org.andengine.opengl.shader.constants.ShaderProgramConstants;
 import org.andengine.opengl.shader.exception.ShaderProgramException;
@@ -15,14 +17,16 @@ public class Blur {
 	static public float mRadialBlurCenterX = 0.5f;
 	static public float mRadialBlurCenterY = 0.5f;
 	
-	static public float sampleStrength = 2.5f;
+	static public float increment = 0.5f;
+	
+	static public int maxBeerCount = 5;
 	
 	public static class RadialBlurShaderProgram extends ShaderProgram {
 		// ===========================================================
 		// Constants
 		// ===========================================================
 
-		private static RadialBlurShaderProgram INSTANCE;
+		private static ArrayList<RadialBlurShaderProgram> INSTANCES;
 
 		public static final String VERTEXSHADER =
 			"uniform mat4 " + ShaderProgramConstants.UNIFORM_MODELVIEWPROJECTIONMATRIX + ";\n" +
@@ -36,52 +40,57 @@ public class Blur {
 
 		private static final String UNIFORM_RADIALBLUR_CENTER = "u_radialblur_center";
 
-		public static final String FRAGMENTSHADER =
-			"precision lowp float;\n" +
+		public static String getFragmentShader(float sampleStrength)
+		{
+			String FRAGMENTSHADER =
+					"precision lowp float;\n" +
 
-			"uniform sampler2D " + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ";\n" +
-			"varying mediump vec2 " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + ";\n" +
+					"uniform sampler2D " + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ";\n" +
+					"varying mediump vec2 " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + ";\n" +
 
-			"uniform vec2 " + RadialBlurShaderProgram.UNIFORM_RADIALBLUR_CENTER + ";\n" +
+					"uniform vec2 " + RadialBlurShaderProgram.UNIFORM_RADIALBLUR_CENTER + ";\n" +
 
-			"const float sampleShare = (1.0 / 11.0);\n" +
-			"const float sampleDist = 1.0;\n" +
-			"const float sampleStrength = " + sampleStrength + ";\n" +
+					"const float sampleShare = (1.0 / 11.0);\n" +
+					"const float sampleDist = 1.0;\n" +
+					"const float sampleStrength = " + sampleStrength + ";\n" +
 
-			"void main() {\n" +
-			/* The actual (unburred) sample. */
-			"	vec4 color = texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + ");\n" +
+					"void main() {\n" +
+					/* The actual (unburred) sample. */
+					"	vec4 color = texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + ");\n" +
 
-			/* Calculate direction towards center of the blur. */
-			"	vec2 direction = " + RadialBlurShaderProgram.UNIFORM_RADIALBLUR_CENTER + " - " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + ";\n" +
+					/* Calculate direction towards center of the blur. */
+					"	vec2 direction = " + RadialBlurShaderProgram.UNIFORM_RADIALBLUR_CENTER + " - " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + ";\n" +
 
-			/* Calculate the distance to the center of the blur. */
-			"	float distance = sqrt(direction.x * direction.x + direction.y * direction.y);\n" +
+					/* Calculate the distance to the center of the blur. */
+					"	float distance = sqrt(direction.x * direction.x + direction.y * direction.y);\n" +
 
-			/* Normalize the direction (reuse the distance). */
-			"	direction = direction / distance;\n" +
+					/* Normalize the direction (reuse the distance). */
+					"	direction = direction / distance;\n" +
 
-			"	vec4 sum = color * sampleShare;\n" +
-			/* Take 10 additional samples along the direction towards the center of the blur. */
-			"	vec2 directionSampleDist = direction * sampleDist;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.08 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.05 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.03 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.02 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.01 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.01 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.02 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.03 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.05 * directionSampleDist) * sampleShare;\n" +
-			"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.08 * directionSampleDist) * sampleShare;\n" +
+					"	vec4 sum = color * sampleShare;\n" +
+					/* Take 10 additional samples along the direction towards the center of the blur. */
+					"	vec2 directionSampleDist = direction * sampleDist;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.08 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.05 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.03 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.02 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " - 0.01 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.01 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.02 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.03 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.05 * directionSampleDist) * sampleShare;\n" +
+					"	sum += texture2D(" + ShaderProgramConstants.UNIFORM_TEXTURE_0 + ", " + ShaderProgramConstants.VARYING_TEXTURECOORDINATES + " + 0.08 * directionSampleDist) * sampleShare;\n" +
 
-			/* Weighten the blur effect with the distance to the center of the blur (further out is blurred more). */
-			"	float t = sqrt(distance) * sampleStrength;\n" +
-			"	t = clamp(t, 0.0, 1.0);\n" + // 0 <= t >= 1
+					/* Weighten the blur effect with the distance to the center of the blur (further out is blurred more). */
+					"	float t = sqrt(distance) * sampleStrength;\n" +
+					"	t = clamp(t, 0.0, 1.0);\n" + // 0 <= t >= 1
 
-			/* Blend the original color with the averaged pixels. */
-			"	gl_FragColor = mix(color, sum, t);\n" +
-			"}";
+					/* Blend the original color with the averaged pixels. */
+					"	gl_FragColor = mix(color, sum, t);\n" +
+					"}";
+			
+			return FRAGMENTSHADER;
+		}
 
 		// ===========================================================
 		// Fields
@@ -95,15 +104,27 @@ public class Blur {
 		// Constructors
 		// ===========================================================
 
-		private RadialBlurShaderProgram() {
-			super(RadialBlurShaderProgram.VERTEXSHADER, RadialBlurShaderProgram.FRAGMENTSHADER);
+		private RadialBlurShaderProgram(int drunkness) {
+			super(RadialBlurShaderProgram.VERTEXSHADER, getFragmentShader(increment  * drunkness));
 		}
 
-		public static RadialBlurShaderProgram getInstance() {
-			if(RadialBlurShaderProgram.INSTANCE == null) {
-				RadialBlurShaderProgram.INSTANCE = new RadialBlurShaderProgram();
+		public static RadialBlurShaderProgram getInstance(int drunkness) {
+			if(RadialBlurShaderProgram.INSTANCES == null) {
+				
+				RadialBlurShaderProgram.INSTANCES = new ArrayList<Blur.RadialBlurShaderProgram>();
+				
+				for(int i = 0; i < maxBeerCount; i++)
+				{
+					RadialBlurShaderProgram shaderProgram = new RadialBlurShaderProgram(i);
+					
+					RadialBlurShaderProgram.INSTANCES.add(shaderProgram);
+				}
 			}
-			return RadialBlurShaderProgram.INSTANCE;
+			if(drunkness >= maxBeerCount - 1)
+			{
+				return RadialBlurShaderProgram.INSTANCES.get(maxBeerCount - 1);
+			}
+			return RadialBlurShaderProgram.INSTANCES.get(drunkness);
 		}
 
 		// ===========================================================

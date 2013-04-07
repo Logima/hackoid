@@ -48,9 +48,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import android.annotation.SuppressLint;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
-import android.util.Log;
 import android.view.KeyEvent;
 
 public class Main extends SimpleBaseGameActivity implements IAccelerationListener {
@@ -78,9 +78,9 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 	private Enemy enemy = new Enemy();
 
 	private PhysicsWorld world;
-	
+
 	private Stats stats;
-	
+
 	private Music mMusic;
 
 	private Random random = new Random();
@@ -95,9 +95,9 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED,
 				new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
 		engineOptions.getTouchOptions().setNeedsMultiTouch(true);
-		
+
 		engineOptions.getAudioOptions().setNeedsMusic(true);
-		
+
 		return engineOptions;
 	}
 
@@ -109,6 +109,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 			private RenderTexture mRenderTexture;
 			private UncoloredSprite mRenderTextureSprite;
 
+			@SuppressLint("WrongCall")
 			@Override
 			public void onDrawFrame(final GLState pGLState) throws InterruptedException {
 				final boolean firstFrame = !this.mRenderTextureInitialized;
@@ -151,11 +152,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 				this.mRenderTextureSprite = new UncoloredSprite(0, 0, renderTextureTextureRegion, this.getVertexBufferObjectManager()) {
 					@Override
 					protected void preDraw(final GLState pGLState, final Camera pCamera) {
-						if(Blur.mRadialBlurring) {
-							this.setShaderProgram(Blur.RadialBlurShaderProgram.getInstance());
-						} else {
-							this.setShaderProgram(PositionTextureCoordinatesShaderProgram.getInstance());
-						}
+							this.setShaderProgram(Blur.RadialBlurShaderProgram.getInstance(stats.drunkness));
 						super.preDraw(pGLState, pCamera);
 
 						GLES20.glUniform2f(Blur.RadialBlurShaderProgram.sUniformRadialBlurCenterLocation, Blur.mRadialBlurCenterX, 1 - Blur.mRadialBlurCenterY);
@@ -189,22 +186,26 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		this.fireControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas,
 				this, "touchscreen_button_fire.png", 210, 190);
 		this.controlTextureAtlas.load();
-		
+
 		MusicFactory.setAssetBasePath("mfx/");
 		try {
 			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "shortTsarpfSong.ogg");
-			
 			this.mMusic.setLooping(true);
 		} catch (final IOException e) {
 			Debug.e(e);
 		}
 		
+<<<<<<< HEAD
+		this.getShaderProgramManager().loadShaderProgram(Blur.RadialBlurShaderProgram.getInstance(0));
+		
+		
+=======
 		this.getShaderProgramManager().loadShaderProgram(Blur.RadialBlurShaderProgram.getInstance());
-		
-		
+>>>>>>> e5d34bd97867e4db9c233089d7a5c7481905116a
 	}
 
 	boolean firstRun = true;
+
 	@Override
 	public Scene onCreateScene() {
 		this.main = this;
@@ -212,8 +213,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		IUpdateHandler iUpdate = new IUpdateHandler() {
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
-				if(firstRun)
-				{
+				if (firstRun) {
 					mMusic.play();
 					firstRun = false;
 				}
@@ -221,7 +221,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 				enemy.getPhysicsBody().setLinearVelocity(new Vector2(-1, 0));
 
 				if (random.nextInt(80) == 0) {
-					new BeerProjectile(main, world, enemy);
+					new BeerProjectile(main, world, enemy.getAnimatedSprite(), false, false);
 				}
 
 				synchronized (beersToBeRemoved) {
@@ -239,8 +239,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 			public void reset() {
 
 			}
-			
-			
+
 		};
 
 		this.mEngine.registerUpdateHandler(iUpdate);
@@ -284,27 +283,45 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 			@Override
 			public void beginContact(Contact pContact) {
-				if (("beer".equals(pContact.getFixtureA().getBody().getUserData()) || "beer".equals(pContact
-						.getFixtureB().getBody().getUserData()))
-						&& !"enemy".equals(pContact.getFixtureA().getBody().getUserData())
-						&& !"enemy".equals(pContact.getFixtureB().getBody().getUserData())) {
+				String userDataA = (String) pContact.getFixtureA().getBody().getUserData();
+				String userDataB = (String) pContact.getFixtureB().getBody().getUserData();
+				if (userDataA == null && userDataB == null) {
+					return;
+				}
+				if (("beer".equals(userDataA) || "beer".equals(userDataB)) && !"enemy".equals(userDataA)
+						&& !"enemy".equals(userDataB)) {
 					BeerProjectile beer;
-					if ("beer".equals(pContact.getFixtureA().getBody().getUserData())) {
+					if ("beer".equals(userDataA)) {
 						beer = findBeerByBody(pContact.getFixtureA().getBody());
 					} else {
 						beer = findBeerByBody(pContact.getFixtureB().getBody());
 					}
 
-					if (beer != null) {
-						if ("player".equals(pContact.getFixtureA().getBody().getUserData())
-								|| "player".equals(pContact.getFixtureB().getBody().getUserData())) {
-							stats.drinkBeer();
-						} else {
-							// riko
-						}
-						beer.destroy();
+					if (beer == null) {
+						return;
 					}
 
+					if ("player".equals(userDataA) || "player".equals(userDataB)) {
+						stats.drinkBeer();
+					} else {
+						// riko
+					}
+					beer.destroy();
+				}
+
+				if (("beerByPlayer".equals(userDataA) || "beerByPlayer".equals(userDataB))
+						&& !"player".equals(userDataA) && !"player".equals(userDataB)) {
+					BeerProjectile beer;
+					if ("beerByPlayer".equals(userDataA)) {
+						beer = findBeerByBody(pContact.getFixtureA().getBody());
+					} else {
+						beer = findBeerByBody(pContact.getFixtureB().getBody());
+					}
+
+					if (beer == null) {
+						return;
+					}
+					beer.destroy();
 				}
 			}
 
@@ -354,7 +371,6 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 				playerSpeed *= 0.75;
 				autoParallaxBackground.setParallaxChangePerSecond(playerSpeed / 5);
 				player.run(playerSpeed);
-				Log.w("debug", "horizontal control clicked: X: '" + X + "' Y: '" + Y + "'");
 				return true;
 			};
 		};
@@ -372,8 +388,9 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 		final Sprite fireControl = new Sprite(1070, 510, fireControlTexture, this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
-				Log.w("debug", "fire pressed");
-				// fire
+				if (touchEvent.isActionDown()) {
+					new BeerProjectile(main, world, player.getAnimatedSprite(), player.facingRight, true);
+				}
 				return true;
 			};
 		};
@@ -407,7 +424,6 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 	@Override
 	public void onAccelerationAccuracyChanged(AccelerationData pAccelerationData) {
-		// TODO Auto-generated method stub
 
 	}
 
