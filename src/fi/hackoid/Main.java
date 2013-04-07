@@ -195,13 +195,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 			Debug.e(e);
 		}
 		
-<<<<<<< HEAD
 		this.getShaderProgramManager().loadShaderProgram(Blur.RadialBlurShaderProgram.getInstance(0));
-		
-		
-=======
-		this.getShaderProgramManager().loadShaderProgram(Blur.RadialBlurShaderProgram.getInstance());
->>>>>>> e5d34bd97867e4db9c233089d7a5c7481905116a
 	}
 
 	boolean firstRun = true;
@@ -317,7 +311,6 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 					} else {
 						beer = findBeerByBody(pContact.getFixtureB().getBody());
 					}
-
 					if (beer == null) {
 						return;
 					}
