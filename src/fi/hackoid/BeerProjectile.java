@@ -57,7 +57,7 @@ public class BeerProjectile {
 
 	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, PhysicsWorld world,
 			AnimatedSprite sprite, boolean right) {
-		float projectileX = sprite.getX();
+		float projectileX = sprite.getX() + sprite.getWidth() / 2;
 		float projectileY = sprite.getY();
 
 		animatedSprite = new AnimatedSprite(projectileX, projectileY, textureRegion, vertexBufferObjectManager);
