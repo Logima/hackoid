@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
 
+import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -20,15 +21,20 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.sprite.UncoloredSprite;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.shader.PositionTextureCoordinatesShaderProgram;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.TextureRegionFactory;
+import org.andengine.opengl.texture.render.RenderTexture;
+import org.andengine.opengl.util.GLState;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 import org.andengine.util.debug.Debug;
@@ -43,6 +49,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 import android.hardware.SensorManager;
+import android.opengl.GLES20;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -95,6 +102,70 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 	}
 
 	@Override
+	public Engine onCreateEngine(EngineOptions pEngineOptions) {
+		return new Engine(pEngineOptions) {
+			private boolean mRenderTextureInitialized;
+
+			private RenderTexture mRenderTexture;
+			private UncoloredSprite mRenderTextureSprite;
+
+			@Override
+			public void onDrawFrame(final GLState pGLState) throws InterruptedException {
+				final boolean firstFrame = !this.mRenderTextureInitialized;
+
+				if(firstFrame) {
+					this.initRenderTextures(pGLState);
+					this.mRenderTextureInitialized = true;
+				}
+
+				final int surfaceWidth = this.mCamera.getSurfaceWidth();
+				final int surfaceHeight = this.mCamera.getSurfaceHeight();
+
+				this.mRenderTexture.begin(pGLState);
+				{
+					/* Draw current frame. */
+					super.onDrawFrame(pGLState);
+				}
+				this.mRenderTexture.end(pGLState);
+
+				/* Draw rendered texture with custom shader. */
+				{
+					pGLState.pushProjectionGLMatrix();
+					
+					pGLState.orthoProjectionGLMatrixf(0, surfaceWidth, 0, surfaceHeight, -1, 1);
+					{
+						mRenderTextureSprite.onDraw(pGLState, this.mCamera);
+					}
+					pGLState.popProjectionGLMatrix();
+				}
+			}
+
+			private void initRenderTextures(final GLState pGLState) {
+				final int surfaceWidth = this.mCamera.getSurfaceWidth();
+				final int surfaceHeight = this.mCamera.getSurfaceHeight();
+
+				this.mRenderTexture = new RenderTexture(this.getTextureManager(), surfaceWidth, surfaceHeight);
+				this.mRenderTexture.init(pGLState);
+
+				final ITextureRegion renderTextureTextureRegion = TextureRegionFactory.extractFromTexture(this.mRenderTexture);
+				this.mRenderTextureSprite = new UncoloredSprite(0, 0, renderTextureTextureRegion, this.getVertexBufferObjectManager()) {
+					@Override
+					protected void preDraw(final GLState pGLState, final Camera pCamera) {
+						if(Blur.mRadialBlurring) {
+							this.setShaderProgram(Blur.RadialBlurShaderProgram.getInstance());
+						} else {
+							this.setShaderProgram(PositionTextureCoordinatesShaderProgram.getInstance());
+						}
+						super.preDraw(pGLState, pCamera);
+
+						GLES20.glUniform2f(Blur.RadialBlurShaderProgram.sUniformRadialBlurCenterLocation, Blur.mRadialBlurCenterX, 1 - Blur.mRadialBlurCenterY);
+					}
+				};
+			}
+		};
+	}
+	
+	@Override
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
@@ -127,17 +198,8 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		} catch (final IOException e) {
 			Debug.e(e);
 		}
-		/*
-		MediaPlayer mediaPlayer = MediaPlayer
-                .create(getApplicationContext(), R.mfx.);
-        try {
-            mediaPlayer.start();
-            mediaPlayer.setLooping(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 		
-		*/
+		this.getShaderProgramManager().loadShaderProgram(Blur.RadialBlurShaderProgram.getInstance());
 		
 		
 	}
@@ -271,10 +333,10 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		stats = new Stats(yourHud, this.camera);
 		stats.createResources(this);
 		stats.createScene(this.getVertexBufferObjectManager());
-		final int xSize = 380;
-		final int ySize = 150;
+		final int xSize = 500;
+		final int ySize = 300;
 
-		final Sprite horizontalControl = new Sprite(0, 570, xSize, ySize, horizontalControlTexture,
+		final Sprite horizontalControl = new Sprite(0, 400, xSize, ySize, horizontalControlTexture,
 				this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
 				float playerSpeed = 0;
