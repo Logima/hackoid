@@ -48,7 +48,6 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import android.annotation.SuppressLint;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
-import android.util.Log;
 import android.view.KeyEvent;
 
 public class Main extends SimpleBaseGameActivity {
@@ -92,6 +91,7 @@ public class Main extends SimpleBaseGameActivity {
 
 	Tree tree;
 	Fuhrer fuhrer;
+	Boss boss;
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -172,8 +172,7 @@ public class Main extends SimpleBaseGameActivity {
 				};
 			}
 		};
-		
-		
+
 	}
 
 	@Override
@@ -210,7 +209,7 @@ public class Main extends SimpleBaseGameActivity {
 		}
 
 		this.getShaderProgramManager().loadShaderProgram(Blur.RadialBlurShaderProgram.getInstance(0));
-		
+
 	}
 
 	boolean firstRun = true;
@@ -339,6 +338,8 @@ public class Main extends SimpleBaseGameActivity {
 
 		new Pie(main);
 
+		boss = new Boss(main);
+
 		world.setContactListener(new ContactListener() {
 
 			@Override
@@ -424,9 +425,8 @@ public class Main extends SimpleBaseGameActivity {
 		stats = new Stats(yourHud, this.camera);
 		stats.createResources(this);
 		stats.createScene(this.getVertexBufferObjectManager());
-		
-		player.setStats(stats);
-		
+
+		player.stats = stats;
 
 		final int xSize = 500;
 		final int ySize = 300;

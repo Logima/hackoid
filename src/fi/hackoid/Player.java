@@ -64,11 +64,6 @@ public class Player {
 
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, false));
 	}
-	
-	public void setStats(Stats stats)
-	{
-		this.stats = stats;
-	}
 
 	public void run(float speed) {
 		body.setLinearVelocity(speed / (30 *  (stats.drunkness + 1)), body.getLinearVelocity().y);
