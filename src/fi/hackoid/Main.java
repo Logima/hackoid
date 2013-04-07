@@ -83,6 +83,9 @@ public class Main extends SimpleBaseGameActivity {
 	Set<BeerProjectile> beers = new HashSet<BeerProjectile>();
 	LinkedList<BeerProjectile> beersToBeRemoved = new LinkedList<BeerProjectile>();
 
+	Set<SpearProjectile> spears = new HashSet<SpearProjectile>();
+	LinkedList<SpearProjectile> spearsToBeRemoved = new LinkedList<SpearProjectile>();
+
 	Set<Enemy> enemies = new HashSet<Enemy>();
 
 	Tree tree;
@@ -226,7 +229,7 @@ public class Main extends SimpleBaseGameActivity {
 						continue;
 					}
 
-					if (!enemy.passedOut) {
+					if (!enemy.dead) {
 						enemy.getPhysicsBody().setLinearVelocity(new Vector2(-1, 0));
 
 						if (random.nextInt(80) == 0) {
@@ -252,6 +255,16 @@ public class Main extends SimpleBaseGameActivity {
 							continue;
 						scene.detachChild(beer.animatedSprite);
 						world.destroyBody(beer.body);
+					}
+				}
+
+				synchronized (spearsToBeRemoved) {
+					while (!spearsToBeRemoved.isEmpty()) {
+						SpearProjectile spear = spearsToBeRemoved.pollFirst();
+						if (spear == null)
+							continue;
+						scene.detachChild(spear.sprite);
+						world.destroyBody(spear.body);
 					}
 				}
 
@@ -342,7 +355,25 @@ public class Main extends SimpleBaseGameActivity {
 
 					if ("player".equals(userDataA) || "player".equals(userDataB)) {
 						stats.drinkBeer();
-					} else if ("enemy".equals(userDataA) || "enemy".equals(userDataB)) {
+					} else {
+						// riko
+					}
+					beer.destroy();
+				}
+
+				if ("spear".equals(userDataA) || "spear".equals(userDataB)) {
+					SpearProjectile Spear;
+					if ("spear".equals(userDataA)) {
+						Spear = findSpearByBody(pContact.getFixtureA().getBody());
+					} else {
+						Spear = findSpearByBody(pContact.getFixtureB().getBody());
+					}
+
+					if (Spear == null) {
+						return;
+					}
+
+					if ("enemy".equals(userDataA) || "enemy".equals(userDataB)) {
 						Enemy enemy;
 						if ("enemy".equals(userDataA)) {
 							enemy = findEnemyByBody(pContact.getFixtureA().getBody());
@@ -350,12 +381,12 @@ public class Main extends SimpleBaseGameActivity {
 							enemy = findEnemyByBody(pContact.getFixtureB().getBody());
 						}
 						if (enemy != null) {
-							enemy.passOut();
+							enemy.die();
 						}
 					} else {
 						// riko
 					}
-					beer.destroy();
+					Spear.destroy();
 				}
 			}
 
@@ -424,7 +455,7 @@ public class Main extends SimpleBaseGameActivity {
 		final Sprite fireControl = new Sprite(1070, 510, fireControlTexture, this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
 				if (touchEvent.isActionDown()) {
-					new BeerProjectile(main, world, player.animatedSprite, player.facingRight, true);
+					new SpearProjectile(main, world, player.animatedSprite, player.facingRight);
 				}
 				return true;
 			};
@@ -462,6 +493,14 @@ public class Main extends SimpleBaseGameActivity {
 		for (Enemy enemy : enemies) {
 			if (body.equals(enemy.body))
 				return enemy;
+		}
+		return null;
+	}
+
+	private SpearProjectile findSpearByBody(Body body) {
+		for (SpearProjectile spear : spears) {
+			if (body.equals(spear.body))
+				return spear;
 		}
 		return null;
 	}
