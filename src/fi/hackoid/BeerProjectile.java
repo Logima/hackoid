@@ -36,7 +36,7 @@ public class BeerProjectile {
 		this.throwedByPlayer = throwedByPlayer;
 		createResources(main);
 		createScene(main.getVertexBufferObjectManager(), world, sprite, right);
-		main.getScene().attachChild(animatedSprite);
+		main.scene.attachChild(animatedSprite);
 		synchronized (main.beers) {
 			main.beers.add(this);
 		}
@@ -74,7 +74,7 @@ public class BeerProjectile {
 
 		body.setGravityScale(0.1f);
 		body.setLinearDamping(0.05f);
-		body.setLinearVelocity(random.nextInt(5) * (right ? 1 : -1), -random.nextInt(5));
+		body.setLinearVelocity(1 + random.nextInt(5) * (right ? 1 : -1), -random.nextInt(5));
 		body.applyAngularImpulse((random.nextFloat() - 0.5f) * 15);
 	}
 

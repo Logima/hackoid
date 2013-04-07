@@ -24,9 +24,6 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.UncoloredSprite;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
-import org.andengine.extension.physics.box2d.util.Vector2Pool;
-import org.andengine.input.sensor.acceleration.AccelerationData;
-import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -52,7 +49,7 @@ import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.view.KeyEvent;
 
-public class Main extends SimpleBaseGameActivity implements IAccelerationListener {
+public class Main extends SimpleBaseGameActivity {
 
 	static final int CAMERA_WIDTH = 1280;
 	static final int CAMERA_HEIGHT = 720;
@@ -282,11 +279,11 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 		player.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT, world);
 
-		scene.attachChild(player.getAnimatedSprite());
+		scene.attachChild(player.animatedSprite);
 
 		enemies.add(new Enemy(main));
 
-		camera.setChaseEntity(player.getAnimatedSprite());
+		camera.setChaseEntity(player.animatedSprite);
 		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
 
 		final Rectangle ground = new Rectangle(-99999, 327, 99999999, 10, vertexBufferObjectManager);
@@ -420,7 +417,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		final Sprite fireControl = new Sprite(1070, 510, fireControlTexture, this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
 				if (touchEvent.isActionDown()) {
-					new BeerProjectile(main, world, player.getAnimatedSprite(), player.facingRight, true);
+					new BeerProjectile(main, world, player.animatedSprite, player.facingRight, true);
 				}
 				return true;
 			};
@@ -428,13 +425,6 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		yourHud.registerTouchArea(fireControl);
 		yourHud.attachChild(fireControl);
 		this.camera.setHUD(yourHud);
-	}
-
-	@Override
-	public void onAccelerationChanged(final AccelerationData pAccelerationData) {
-		final Vector2 gravity = Vector2Pool.obtain(pAccelerationData.getX(), pAccelerationData.getY());
-		this.world.setGravity(gravity);
-		Vector2Pool.recycle(gravity);
 	}
 
 	@Override
@@ -451,15 +441,6 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		} else {
 			return super.onKeyDown(pKeyCode, pEvent);
 		}
-	}
-
-	@Override
-	public void onAccelerationAccuracyChanged(AccelerationData pAccelerationData) {
-
-	}
-
-	public Scene getScene() {
-		return scene;
 	}
 
 	private BeerProjectile findBeerByBody(Body body) {

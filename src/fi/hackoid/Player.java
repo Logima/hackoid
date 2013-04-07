@@ -90,14 +90,6 @@ public class Player {
 		}
 	}
 
-	public Body getPhysicsBody() {
-		return body;
-	}
-
-	public AnimatedSprite getAnimatedSprite() {
-		return animatedSprite;
-	}
-
 	public void jump() {
 		if (Math.abs(body.getLinearVelocity().y) < 0.5) {
 			body.setLinearVelocity(body.getLinearVelocity().x, -15);
