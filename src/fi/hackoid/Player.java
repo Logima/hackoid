@@ -33,6 +33,8 @@ public class Player {
 			frameTime, frameTime, frameTime, frameTime, frameTime };
 	private long[] frameTimes10 = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime };
+	private int throwFrameTime = 75;
+	private long[] throwFrameTimes = new long[] { throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime };
 
 	Body body;
 
@@ -93,6 +95,14 @@ public class Player {
 			animatedSprite.animate(frameTimes, 0, 19, true);
 		} else {
 			animatedSprite.animate(frameTimes, 20, 39, true);
+		}
+	}
+	
+	public void animateThrow() {
+		if (facingRight) {
+			animatedSprite.animate(throwFrameTimes, 40, 47, false);
+		} else {
+			animatedSprite.animate(throwFrameTimes, 50, 57, false);
 		}
 	}
 
