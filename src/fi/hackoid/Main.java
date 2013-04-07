@@ -1,5 +1,9 @@
 package fi.hackoid;
 
+import java.io.IOException;
+
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -22,14 +26,16 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
-
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import org.andengine.util.debug.Debug;
 
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.KeyEvent;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 public class Main extends SimpleBaseGameActivity implements IAccelerationListener {
 
@@ -57,6 +63,8 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 	
 	private Stats stats;
 	
+	private Music mMusic;
+	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		camera = new CustomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -64,6 +72,9 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH,
 				CAMERA_HEIGHT), camera);
 		engineOptions.getTouchOptions().setNeedsMultiTouch(true);
+		
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+		
 		return engineOptions;
 	}
 
@@ -91,8 +102,31 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		this.fireControlTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.controlTextureAtlas,
 				this, "touchscreen_button_fire.png", 210, 190);
 		this.controlTextureAtlas.load();
+		
+		MusicFactory.setAssetBasePath("mfx/");
+		try {
+			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "tsarpfSong10min.ogg");
+			
+			this.mMusic.setLooping(true);
+		} catch (final IOException e) {
+			Debug.e(e);
+		}
+		/*
+		MediaPlayer mediaPlayer = MediaPlayer
+                .create(getApplicationContext(), R.mfx.);
+        try {
+            mediaPlayer.start();
+            mediaPlayer.setLooping(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		*/
+		
+		
 	}
 
+	boolean firstRun = true;
 	@Override
 	public Scene onCreateScene() {
 		
@@ -101,7 +135,10 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 			public void onUpdate(float pSecondsElapsed) {
 				// TODO Auto-generated method stub
 				enemy.getPhysicsBody().setLinearVelocity(new Vector2(-1,0));
-				
+				if(firstRun)
+				{
+					mMusic.play();
+				}
 			}
 
 			@Override
@@ -109,6 +146,8 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 				// TODO Auto-generated method stub
 				
 			}
+			
+			
 		};
 		
 		this.mEngine.registerUpdateHandler(iUpdate);
@@ -160,7 +199,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 	private void createControllers() {
 		HUD yourHud = new HUD();
-		stats = new Stats(yourHud);
+		stats = new Stats(yourHud, this.camera);
 		stats.createResources(this);
 		stats.createScene(this.getVertexBufferObjectManager());
 		final int xSize = 380;
