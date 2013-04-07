@@ -23,10 +23,13 @@ public class Enemy {
 
 	Body body;
 
+	boolean passedOut = false;
+
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 	private int frameTime = 80;
-	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
-			frameTime, frameTime, frameTime, frameTime };
+	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
+			frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
+			frameTime, frameTime, frameTime, frameTime, frameTime };
 
 	public Enemy() {
 	}
@@ -56,7 +59,7 @@ public class Enemy {
 
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, false));
 
-		body.setLinearVelocity(-10 * 2, 0);
+		body.setLinearVelocity(-20, 0);
 	}
 
 	public Body getPhysicsBody() {
@@ -65,6 +68,14 @@ public class Enemy {
 
 	public AnimatedSprite getAnimatedSprite() {
 		return animatedSprite;
+	}
+
+	public void passOut() {
+		passedOut = true;
+		body.setLinearVelocity(0, 0);
+		animatedSprite.stopAnimation(0);
+		animatedSprite.setRotation(270);
+
 	}
 
 }

@@ -113,7 +113,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 			public void onDrawFrame(final GLState pGLState) throws InterruptedException {
 				final boolean firstFrame = !this.mRenderTextureInitialized;
 
-				if(firstFrame) {
+				if (firstFrame) {
 					this.initRenderTextures(pGLState);
 					this.mRenderTextureInitialized = true;
 				}
@@ -131,7 +131,7 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 				/* Draw rendered texture with custom shader. */
 				{
 					pGLState.pushProjectionGLMatrix();
-					
+
 					pGLState.orthoProjectionGLMatrixf(0, surfaceWidth, 0, surfaceHeight, -1, 1);
 					{
 						mRenderTextureSprite.onDraw(pGLState, this.mCamera);
@@ -147,20 +147,23 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 				this.mRenderTexture = new RenderTexture(this.getTextureManager(), surfaceWidth, surfaceHeight);
 				this.mRenderTexture.init(pGLState);
 
-				final ITextureRegion renderTextureTextureRegion = TextureRegionFactory.extractFromTexture(this.mRenderTexture);
-				this.mRenderTextureSprite = new UncoloredSprite(0, 0, renderTextureTextureRegion, this.getVertexBufferObjectManager()) {
+				final ITextureRegion renderTextureTextureRegion = TextureRegionFactory
+						.extractFromTexture(this.mRenderTexture);
+				this.mRenderTextureSprite = new UncoloredSprite(0, 0, renderTextureTextureRegion,
+						this.getVertexBufferObjectManager()) {
 					@Override
 					protected void preDraw(final GLState pGLState, final Camera pCamera) {
-							this.setShaderProgram(Blur.RadialBlurShaderProgram.getInstance(stats.drunkness));
+						this.setShaderProgram(Blur.RadialBlurShaderProgram.getInstance(stats.drunkness));
 						super.preDraw(pGLState, pCamera);
 
-						GLES20.glUniform2f(Blur.RadialBlurShaderProgram.sUniformRadialBlurCenterLocation, Blur.mRadialBlurCenterX, 1 - Blur.mRadialBlurCenterY);
+						GLES20.glUniform2f(Blur.RadialBlurShaderProgram.sUniformRadialBlurCenterLocation,
+								Blur.mRadialBlurCenterX, 1 - Blur.mRadialBlurCenterY);
 					}
 				};
 			}
 		};
 	}
-	
+
 	@Override
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
@@ -188,12 +191,13 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 		MusicFactory.setAssetBasePath("mfx/");
 		try {
-			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "shortTsarpfSong.ogg");
+			this.mMusic = MusicFactory
+					.createMusicFromAsset(this.mEngine.getMusicManager(), this, "shortTsarpfSong.ogg");
 			this.mMusic.setLooping(true);
 		} catch (final IOException e) {
 			Debug.e(e);
 		}
-		
+
 		this.getShaderProgramManager().loadShaderProgram(Blur.RadialBlurShaderProgram.getInstance(0));
 	}
 
@@ -211,10 +215,12 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 					firstRun = false;
 				}
 
-				enemy.getPhysicsBody().setLinearVelocity(new Vector2(-1, 0));
+				if (!enemy.passedOut) {
+					enemy.getPhysicsBody().setLinearVelocity(new Vector2(-1, 0));
 
-				if (random.nextInt(80) == 0) {
-					new BeerProjectile(main, world, enemy.getAnimatedSprite(), false, false);
+					if (random.nextInt(80) == 0) {
+						new BeerProjectile(main, world, enemy.getAnimatedSprite(), false, false);
+					}
 				}
 
 				synchronized (beersToBeRemoved) {
@@ -312,6 +318,9 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 					}
 					if (beer == null) {
 						return;
+					}
+					if ("enemy".equals(userDataA) || "enemy".equals(userDataB)) {
+						enemy.passOut();
 					}
 					beer.destroy();
 				}
