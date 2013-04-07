@@ -59,6 +59,7 @@ public class Player {
 		animatedSprite.registerUpdateHandler(world);
 
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
+		body.setUserData("player");
 
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, false));
 	}
