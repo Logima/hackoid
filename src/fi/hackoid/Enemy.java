@@ -20,7 +20,10 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 public class Enemy {
 
 	private static BitmapTextureAtlas textureAtlas;
+	private static BitmapTextureAtlas deathTextureAtlas;
+	
 	private static TiledTextureRegion textureRegion;
+	private static TiledTextureRegion deathTextureRegion;
 
 	AnimatedSprite animatedSprite;
 
@@ -37,6 +40,11 @@ public class Enemy {
 	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime, frameTime };
+	
+	private int deathFrameTime = 50;
+	private long[] deathFrameTimes = new long[] { deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime,
+			deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime			
+	};
 
 	public Enemy(Main main) {
 		this.main = main;
@@ -46,9 +54,10 @@ public class Enemy {
 	}
 
 	public void createResources(Main main) {
-		if (textureAtlas != null) {
+		if (textureAtlas != null && deathTextureAtlas != null) {
 			return;
 		}
+		
 		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
 				"monster_teekkari_walking.png", 0, 0, 10, 4);
@@ -91,8 +100,13 @@ public class Enemy {
 		Filter fil = body.getFixtureList().get(0).getFilterData();
 		fil.groupIndex = -2;
 		body.getFixtureList().get(0).setFilterData(fil);
-		animatedSprite.stopAnimation(0);
-		animatedSprite.setRotation(270);
+		
+		float playerX = main.player.animatedSprite.getX();
+		
+		if(playerX > )
+		
+		animatedSprite.animate(deathFrameTimes, 40, 49, false);
+		//animatedSprite.setRotation(270);
 
 	}
 
