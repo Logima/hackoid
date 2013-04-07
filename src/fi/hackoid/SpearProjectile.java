@@ -27,6 +27,8 @@ public class SpearProjectile {
 	Body body;
 	Main main;
 
+	boolean hasDamaged = false;
+
 	private Random random = new Random();
 
 	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0f);
@@ -35,13 +37,13 @@ public class SpearProjectile {
 	}
 
 	public SpearProjectile(Main main, PhysicsWorld world, AnimatedSprite sourceSprite, boolean right) {
+		this.main = main;
 		createResources(main);
 		createScene(main.getVertexBufferObjectManager(), world, sourceSprite, right);
 		main.scene.attachChild(sprite);
 		synchronized (main.beers) {
 			main.spears.add(this);
 		}
-		this.main = main;
 	}
 
 	public void createResources(Main main) {
@@ -70,7 +72,8 @@ public class SpearProjectile {
 
 		body.setGravityScale(0.1f);
 		body.setLinearDamping(0.05f);
-		body.setLinearVelocity((1 + random.nextInt(5)) * (right ? 1 : -1), -random.nextInt(5));
+		body.setLinearVelocity(main.player.body.getLinearVelocity().x + (1 + random.nextInt(5)) * (right ? 1 : -1),
+				main.player.body.getLinearVelocity().y - random.nextInt(5));
 	}
 
 	public void destroy() {

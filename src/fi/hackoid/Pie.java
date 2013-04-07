@@ -36,7 +36,7 @@ public class Pie {
 		
 		float x = random.nextInt(2000) + 1000;
 
-		Sprite b = new Sprite(x, 260, 160, 80, pie, vertexBufferObjectManager){
+		Sprite b = new Sprite(x, 260, 160, 80, pie, vertexBufferObjectManager) {
 		      @Override
 		      protected void onManagedUpdate(final float pSecondsElapsed)
 		      {
