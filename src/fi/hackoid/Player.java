@@ -25,7 +25,7 @@ public class Player {
 
 	private float oldSpeed;
 
-	private boolean facingRight = true;
+	boolean facingRight = true;
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
