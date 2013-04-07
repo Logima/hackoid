@@ -12,10 +12,12 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import android.util.Log;
+
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Enemy {
 
@@ -35,13 +37,13 @@ public class Enemy {
 
 	private Random random = new Random();
 
-	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0);
 	private int frameTime = 80;
 	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime, frameTime };
 	
-	private int deathFrameTime = 100;
+	private int deathFrameTime = 150;
 	private long[] deathFrameTimes = new long[] { deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime,
 			deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime			
 	};
@@ -102,9 +104,11 @@ public class Enemy {
 		body.getFixtureList().get(0).setFilterData(fil);
 		
 		float playerX = main.player.animatedSprite.getX();
-		float enemyX = body.getPosition().x;
+		float enemyX = animatedSprite.getX();
 		
-		if(playerX < enemyX)
+		Log.w("debug", "playerX: " + playerX + " enemyX: " + enemyX);
+		
+		if(playerX > enemyX)
 		{
 			animatedSprite.animate(deathFrameTimes, 50, 59, false);
 		}

@@ -25,13 +25,15 @@ public class Player {
 
 	boolean facingRight = true;
 
-	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0);
 
 	private int frameTime = 50;
 	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime };
 
 	Body body;
+	
+	Stats stats;
 
 	public Player() {
 	}
@@ -62,9 +64,14 @@ public class Player {
 
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, false));
 	}
+	
+	public void setStats(Stats stats)
+	{
+		this.stats = stats;
+	}
 
 	public void run(float speed) {
-		body.setLinearVelocity(speed / 20, body.getLinearVelocity().y);
+		body.setLinearVelocity(speed / (30 *  (stats.drunkness + 1)), body.getLinearVelocity().y);
 
 		if (speed == 0) {
 			animatedSprite.stopAnimation();

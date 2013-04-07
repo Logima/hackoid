@@ -172,6 +172,8 @@ public class Main extends SimpleBaseGameActivity {
 				};
 			}
 		};
+		
+		
 	}
 
 	@Override
@@ -208,6 +210,7 @@ public class Main extends SimpleBaseGameActivity {
 		}
 
 		this.getShaderProgramManager().loadShaderProgram(Blur.RadialBlurShaderProgram.getInstance(0));
+		
 	}
 
 	boolean firstRun = true;
@@ -421,6 +424,9 @@ public class Main extends SimpleBaseGameActivity {
 		stats = new Stats(yourHud, this.camera);
 		stats.createResources(this);
 		stats.createScene(this.getVertexBufferObjectManager());
+		
+		player.setStats(stats);
+		
 
 		final int xSize = 500;
 		final int ySize = 300;
