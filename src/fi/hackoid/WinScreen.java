@@ -8,14 +8,14 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-public class DeathScreen {
+public class WinScreen {
 
 	private BitmapTextureAtlas textureAtlas;
 	private TextureRegion textureRegion;
 
 	Sprite sprite;
 
-	public DeathScreen(Main main, HUD hud) {
+	public WinScreen(Main main, HUD hud) {
 		createResources(main);
 		createScene(main.getVertexBufferObjectManager());
 		hud.attachChild(sprite);

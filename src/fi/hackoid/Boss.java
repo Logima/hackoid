@@ -56,7 +56,7 @@ public class Boss {
 
 	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, int cameraWidth, int cameraHeight,
 			PhysicsWorld world) {
-		float x = main.player.animatedSprite.getX() + 7000 + random.nextInt(3000);
+		float x = main.player.animatedSprite.getX() + 1000 + random.nextInt(3000);
 		float y = 125;
 
 		animatedSprite = new AnimatedSprite(x, y, textureRegion, vertexBufferObjectManager) {
@@ -86,7 +86,8 @@ public class Boss {
 									} else {
 										animatedSprite.animate(deathFrameTimes, 20, 29, false);
 									}
-									// voitit pelin
+									
+									main.playerWin();
 								}
 							}
 						}

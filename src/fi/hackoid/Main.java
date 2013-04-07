@@ -70,9 +70,6 @@ public class Main extends SimpleBaseGameActivity {
 	private AutoParallaxBackground autoParallaxBackground;
 	private Main main;
 	Scene scene;
-	
-	BitmapTextureAtlas deathScreenAtlas;
-	ITextureRegion deathScreenTexture;
 
 	Player player = new Player();
 
@@ -95,6 +92,7 @@ public class Main extends SimpleBaseGameActivity {
 	Tree tree;
 	Fuhrer fuhrer;
 	DeathScreen deathScreen;
+	WinScreen winScreen;
 	
 	boolean playerDead = false;
 	
@@ -348,8 +346,6 @@ public class Main extends SimpleBaseGameActivity {
 
 		new Pie(main);
 
-		boss = new Boss(main);
-
 		world.setContactListener(new ContactListener() {
 
 			@Override
@@ -534,6 +530,16 @@ public class Main extends SimpleBaseGameActivity {
 		
 		mEngine.stop();
 		
+	}
+	
+	public void playerWin()
+	{
+		playerDead = true;
+		stats.drunkness = 0;
+		
+		winScreen = new WinScreen(main, yourHud);
+		
+		mEngine.stop();
 	}
 	
 }
