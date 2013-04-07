@@ -10,8 +10,6 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-import android.util.Log;
-
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -101,7 +99,6 @@ public class Player {
 	}
 
 	public void jump() {
-		Log.w("debug", "jump pressed " + animatedSprite.getY());
 		if (Math.abs(body.getLinearVelocity().y) < 0.5) {
 			body.setLinearVelocity(body.getLinearVelocity().x, -15);
 		}

@@ -17,7 +17,7 @@ public class Blur {
 	static public float mRadialBlurCenterX = 0.5f;
 	static public float mRadialBlurCenterY = 0.5f;
 	
-	static public float increment = 0.5f;
+	static public float increment = 0.4f;
 	
 	static public int maxBeerCount = 5;
 	
