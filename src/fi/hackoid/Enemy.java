@@ -25,7 +25,6 @@ public class Enemy {
 	private static BitmapTextureAtlas deathTextureAtlas;
 	
 	private static TiledTextureRegion textureRegion;
-	private static TiledTextureRegion deathTextureRegion;
 
 	AnimatedSprite animatedSprite;
 
@@ -116,9 +115,6 @@ public class Enemy {
 		{
 			animatedSprite.animate(deathFrameTimes, 40, 49, false);
 		}
-		//animatedSprite.setRotation(270);
-
-
 	}
 
 }
