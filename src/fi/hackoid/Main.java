@@ -371,6 +371,7 @@ public class Main extends SimpleBaseGameActivity {
 
 					if ("player".equals(userDataA) || "player".equals(userDataB)) {
 						stats.drinkBeer();
+						player.animateDrink();
 					} else {
 						// riko
 					}

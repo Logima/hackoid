@@ -28,20 +28,23 @@ public class Player {
 	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0);
 
 	private int frameTime = 50;
-	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
+	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
+			frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
+			frameTime, frameTime, frameTime, frameTime, frameTime };
+	private long[] frameTimes10 = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime };
 
 	Body body;
-	
+
 	Stats stats;
 
 	public Player() {
 	}
 
 	public void createResources(Main main) {
-		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
+		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
-				"player_walking.png", 0, 0, 10, 4);
+				"player_animationframes.png", 0, 0, 10, 8);
 		textureAtlas.load();
 	}
 
@@ -66,7 +69,7 @@ public class Player {
 	}
 
 	public void run(float speed) {
-		body.setLinearVelocity(speed / (30 *  (stats.drunkness + 1)), body.getLinearVelocity().y);
+		body.setLinearVelocity(speed / (30 * (stats.drunkness + 1)), body.getLinearVelocity().y);
 
 		if (speed == 0) {
 			animatedSprite.stopAnimation();
@@ -85,11 +88,19 @@ public class Player {
 		oldSpeed = speed;
 	}
 
-	private void animateRun() {
+	public void animateRun() {
 		if (facingRight) {
 			animatedSprite.animate(frameTimes, 0, 19, true);
 		} else {
 			animatedSprite.animate(frameTimes, 20, 39, true);
+		}
+	}
+
+	public void animateDrink() {
+		if (facingRight) {
+			animatedSprite.animate(frameTimes10, 60, 69, false);
+		} else {
+			animatedSprite.animate(frameTimes10, 70, 79, false);
 		}
 	}
 
