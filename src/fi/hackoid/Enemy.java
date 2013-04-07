@@ -28,7 +28,7 @@ public class Enemy {
 
 	Body body;
 
-	boolean passedOut = false;
+	boolean dead = false;
 
 	private Random random = new Random();
 
@@ -85,14 +85,13 @@ public class Enemy {
 		return animatedSprite;
 	}
 
-	public void passOut() {
-		passedOut = true;
+	public void die() {
+		dead = true;
 		body.setLinearVelocity(0, 0);
 		Filter fil = body.getFixtureList().get(0).getFilterData();
 		fil.groupIndex = -2;
 		body.getFixtureList().get(0).setFilterData(fil);
 		animatedSprite.stopAnimation(0);
-		animatedSprite.setRotation(270);
 
 	}
 
