@@ -41,7 +41,7 @@ public class Enemy {
 			frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime, frameTime };
 	
-	private int deathFrameTime = 50;
+	private int deathFrameTime = 100;
 	private long[] deathFrameTimes = new long[] { deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime,
 			deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime, deathFrameTime			
 	};
@@ -58,9 +58,9 @@ public class Enemy {
 			return;
 		}
 		
-		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
+		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 2048	, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
-				"monster_teekkari_walking.png", 0, 0, 10, 4);
+				"monster_teekkari_animationframes.png", 0, 0, 10, 6);
 		textureAtlas.load();
 	}
 
@@ -102,10 +102,16 @@ public class Enemy {
 		body.getFixtureList().get(0).setFilterData(fil);
 		
 		float playerX = main.player.animatedSprite.getX();
+		float enemyX = body.getPosition().x;
 		
-		//if(playerX > )
-		
-		animatedSprite.animate(deathFrameTimes, 40, 49, false);
+		if(playerX < enemyX)
+		{
+			animatedSprite.animate(deathFrameTimes, 50, 59, false);
+		}
+		else
+		{
+			animatedSprite.animate(deathFrameTimes, 40, 49, false);
+		}
 		//animatedSprite.setRotation(270);
 
 
