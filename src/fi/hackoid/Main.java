@@ -306,8 +306,7 @@ public class Main extends SimpleBaseGameActivity {
 				if (userDataA == null && userDataB == null) {
 					return;
 				}
-				if (("beer".equals(userDataA) || "beer".equals(userDataB)) && !"enemy".equals(userDataA)
-						&& !"enemy".equals(userDataB)) {
+				if ("beer".equals(userDataA) || "beer".equals(userDataB)) {
 					BeerProjectile beer;
 					if ("beer".equals(userDataA)) {
 						beer = findBeerByBody(pContact.getFixtureA().getBody());
@@ -321,24 +320,7 @@ public class Main extends SimpleBaseGameActivity {
 
 					if ("player".equals(userDataA) || "player".equals(userDataB)) {
 						stats.drinkBeer();
-					} else {
-						// riko
-					}
-					beer.destroy();
-				}
-
-				if (("beerByPlayer".equals(userDataA) || "beerByPlayer".equals(userDataB))
-						&& !"player".equals(userDataA) && !"player".equals(userDataB)) {
-					BeerProjectile beer;
-					if ("beerByPlayer".equals(userDataA)) {
-						beer = findBeerByBody(pContact.getFixtureA().getBody());
-					} else {
-						beer = findBeerByBody(pContact.getFixtureB().getBody());
-					}
-					if (beer == null) {
-						return;
-					}
-					if ("enemy".equals(userDataA) || "enemy".equals(userDataB)) {
+					} else if ("enemy".equals(userDataA) || "enemy".equals(userDataB)) {
 						Enemy enemy;
 						if ("enemy".equals(userDataA)) {
 							enemy = findEnemyByBody(pContact.getFixtureA().getBody());
@@ -348,6 +330,8 @@ public class Main extends SimpleBaseGameActivity {
 						if (enemy != null) {
 							enemy.passOut();
 						}
+					} else {
+						// riko
 					}
 					beer.destroy();
 				}

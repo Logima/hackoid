@@ -31,7 +31,7 @@ public class Enemy {
 
 	private Random random = new Random();
 
-	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 	private int frameTime = 80;
 	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
@@ -67,6 +67,7 @@ public class Enemy {
 
 		animatedSprite.registerUpdateHandler(world);
 
+		FIXTURE_DEF.filter.groupIndex = -4;
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
 		body.setUserData("enemy");
 

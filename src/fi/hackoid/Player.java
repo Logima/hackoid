@@ -25,7 +25,7 @@ public class Player {
 
 	boolean facingRight = true;
 
-	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 
 	private int frameTime = 50;
 	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
@@ -56,6 +56,7 @@ public class Player {
 
 		animatedSprite.registerUpdateHandler(world);
 
+		FIXTURE_DEF.filter.groupIndex = -2;
 		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
 		body.setUserData("player");
 

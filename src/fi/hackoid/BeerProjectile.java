@@ -30,7 +30,12 @@ public class BeerProjectile {
 
 	private Random random = new Random();
 
-	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0f);
+	private static FixtureDef FIXTURE_DEF_PLAYER = PhysicsFactory.createFixtureDef(1, 0.5f, 0f);
+	private static FixtureDef FIXTURE_DEF_ENEMY = PhysicsFactory.createFixtureDef(1, 0.5f, 0f);
+	static {
+		FIXTURE_DEF_PLAYER.filter.groupIndex = -2;
+		FIXTURE_DEF_ENEMY.filter.groupIndex = -4;
+	}
 
 	public BeerProjectile(Main main, PhysicsWorld world, AnimatedSprite sprite, boolean right, boolean throwedByPlayer) {
 		this.throwedByPlayer = throwedByPlayer;
@@ -52,7 +57,7 @@ public class BeerProjectile {
 
 	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, PhysicsWorld world,
 			AnimatedSprite sprite, boolean right) {
-		float projectileX = sprite.getX() + (sprite.getWidth() / 2 + 1) * (right ? 1 : -1);
+		float projectileX = sprite.getX();
 		float projectileY = sprite.getY();
 
 		animatedSprite = new AnimatedSprite(projectileX, projectileY, textureRegion, vertexBufferObjectManager);
@@ -63,12 +68,12 @@ public class BeerProjectile {
 
 		animatedSprite.registerUpdateHandler(world);
 
-		body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF);
 		if (throwedByPlayer) {
-			body.setUserData("beerByPlayer");
+			body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF_PLAYER);
 		} else {
-			body.setUserData("beer");
+			body = PhysicsFactory.createBoxBody(world, animatedSprite, BodyType.DynamicBody, FIXTURE_DEF_ENEMY);
 		}
+		body.setUserData("beer");
 
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
 
