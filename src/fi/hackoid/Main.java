@@ -54,8 +54,8 @@ import android.view.KeyEvent;
 
 public class Main extends SimpleBaseGameActivity implements IAccelerationListener {
 
-	private static final int CAMERA_WIDTH = 1280;
-	private static final int CAMERA_HEIGHT = 720;
+	static final int CAMERA_WIDTH = 1280;
+	static final int CAMERA_HEIGHT = 720;
 
 	private BitmapTextureAtlas backgroundTextureAtlas;
 
@@ -71,12 +71,11 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 	private Camera camera;
 	private AutoParallaxBackground autoParallaxBackground;
 	private Main main;
-	private Scene scene;
+	Scene scene;
 
-	private Player player = new Player();
-	private Enemy enemy = new Enemy();
+	Player player = new Player();
 
-	private PhysicsWorld world;
+	PhysicsWorld world;
 
 	private Stats stats;
 
@@ -86,6 +85,8 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 	Set<BeerProjectile> beers = new HashSet<BeerProjectile>();
 	LinkedList<BeerProjectile> beersToBeRemoved = new LinkedList<BeerProjectile>();
+
+	Set<Enemy> enemies = new HashSet<Enemy>();
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -169,7 +170,6 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
 		player.createResources(this);
-		enemy.createResources(this);
 
 		this.backgroundTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 2048, 2048);
 		this.backgroundTextureGround = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
@@ -215,12 +215,34 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 					firstRun = false;
 				}
 
-				if (!enemy.passedOut) {
-					enemy.getPhysicsBody().setLinearVelocity(new Vector2(-1, 0));
-
-					if (random.nextInt(80) == 0) {
-						new BeerProjectile(main, world, enemy.getAnimatedSprite(), false, false);
+				float rightmostEnemyX = 0;
+				Set<Enemy> enemiesToBeDeleted = new HashSet<Enemy>();
+				for (Enemy enemy : enemies) {
+					if (enemy.animatedSprite.getX() > rightmostEnemyX) {
+						rightmostEnemyX = enemy.animatedSprite.getX();
 					}
+					if (enemy.animatedSprite.getX() + 2000 < player.animatedSprite.getX()) {
+						enemiesToBeDeleted.add(enemy);
+						continue;
+					}
+
+					if (!enemy.passedOut) {
+						enemy.getPhysicsBody().setLinearVelocity(new Vector2(-1, 0));
+
+						if (random.nextInt(80) == 0) {
+							new BeerProjectile(main, world, enemy.getAnimatedSprite(), false, false);
+						}
+					}
+				}
+
+				for (Enemy enemy : enemiesToBeDeleted) {
+					enemies.remove(enemy);
+					scene.detachChild(enemy.animatedSprite);
+					world.destroyBody(enemy.body);
+				}
+
+				if (rightmostEnemyX + 500 < player.animatedSprite.getX()) {
+					enemies.add(new Enemy(main));
 				}
 
 				synchronized (beersToBeRemoved) {
@@ -259,10 +281,10 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		this.world = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
 
 		player.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT, world);
-		enemy.createScene(vertexBufferObjectManager, CAMERA_WIDTH, CAMERA_HEIGHT, world);
 
 		scene.attachChild(player.getAnimatedSprite());
-		scene.attachChild(enemy.getAnimatedSprite());
+
+		enemies.add(new Enemy(main));
 
 		camera.setChaseEntity(player.getAnimatedSprite());
 		camera.setCenter(camera.getCenterX(), camera.getCenterY() - 200);
@@ -320,7 +342,15 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 						return;
 					}
 					if ("enemy".equals(userDataA) || "enemy".equals(userDataB)) {
-						enemy.passOut();
+						Enemy enemy;
+						if ("enemy".equals(userDataA)) {
+							enemy = findEnemyByBody(pContact.getFixtureA().getBody());
+						} else {
+							enemy = findEnemyByBody(pContact.getFixtureB().getBody());
+						}
+						if (enemy != null) {
+							enemy.passOut();
+						}
 					}
 					beer.destroy();
 				}
@@ -436,6 +466,14 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		for (BeerProjectile beer : beers) {
 			if (body.equals(beer.body))
 				return beer;
+		}
+		return null;
+	}
+
+	private Enemy findEnemyByBody(Body body) {
+		for (Enemy enemy : enemies) {
+			if (body.equals(enemy.body))
+				return enemy;
 		}
 		return null;
 	}

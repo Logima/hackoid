@@ -1,5 +1,7 @@
 package fi.hackoid;
 
+import java.util.Random;
+
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -16,14 +18,18 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Enemy {
 
-	private BitmapTextureAtlas textureAtlas;
-	private TiledTextureRegion textureRegion;
+	private static BitmapTextureAtlas textureAtlas;
+	private static TiledTextureRegion textureRegion;
 
-	private AnimatedSprite animatedSprite;
+	AnimatedSprite animatedSprite;
+
+	private Main main;
 
 	Body body;
 
 	boolean passedOut = false;
+
+	private Random random = new Random();
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 	private int frameTime = 80;
@@ -31,10 +37,17 @@ public class Enemy {
 			frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime, frameTime };
 
-	public Enemy() {
+	public Enemy(Main main) {
+		this.main = main;
+		createResources(main);
+		createScene(main.getVertexBufferObjectManager(), Main.CAMERA_WIDTH, Main.CAMERA_HEIGHT, main.world);
+		main.scene.attachChild(animatedSprite);
 	}
 
 	public void createResources(Main main) {
+		if (textureAtlas != null) {
+			return;
+		}
 		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
 				"monster_teekkari_walking.png", 0, 0, 10, 4);
@@ -43,10 +56,10 @@ public class Enemy {
 
 	public void createScene(VertexBufferObjectManager vertexBufferObjectManager, int cameraWidth, int cameraHeight,
 			PhysicsWorld world) {
-		float playerX = 500;
-		float playerY = 200;
+		float x = main.player.animatedSprite.getX() + 700 + random.nextInt(3000);
+		float y = 200;
 
-		animatedSprite = new AnimatedSprite(playerX, playerY, textureRegion, vertexBufferObjectManager);
+		animatedSprite = new AnimatedSprite(x, y, textureRegion, vertexBufferObjectManager);
 		animatedSprite.setScaleCenterY(textureRegion.getHeight());
 		animatedSprite.setScale(1);
 

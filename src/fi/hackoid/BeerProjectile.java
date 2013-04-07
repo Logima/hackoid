@@ -72,8 +72,9 @@ public class BeerProjectile {
 
 		world.registerPhysicsConnector(new PhysicsConnector(animatedSprite, body, true, true));
 
+		body.setGravityScale(0.1f);
 		body.setLinearDamping(0.05f);
-		body.setLinearVelocity(random.nextInt(20) * (right ? 1 : -1), -10 - random.nextInt(10));
+		body.setLinearVelocity(random.nextInt(5) * (right ? 1 : -1), -random.nextInt(5));
 		body.applyAngularImpulse((random.nextFloat() - 0.5f) * 15);
 	}
 

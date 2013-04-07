@@ -19,7 +19,7 @@ public class Player {
 	private BitmapTextureAtlas textureAtlas;
 	private TiledTextureRegion textureRegion;
 
-	private AnimatedSprite animatedSprite;
+	AnimatedSprite animatedSprite;
 
 	private float oldSpeed;
 
