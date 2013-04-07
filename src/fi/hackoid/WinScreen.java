@@ -24,7 +24,7 @@ public class WinScreen {
 
 	public void createResources(Main main) {
 		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 1280, 720, TextureOptions.BILINEAR);
-		textureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(textureAtlas, main, "you_lose.png",
+		textureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(textureAtlas, main, "victory_screen.png",
 				0, 0);
 		textureAtlas.load();
 	}
