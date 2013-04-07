@@ -265,8 +265,10 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 		if (pKeyCode == KeyEvent.KEYCODE_MENU && pEvent.getAction() == KeyEvent.ACTION_DOWN) {
 			if (mEngine.isRunning()) {
 				mEngine.stop();
+				mMusic.pause();
 			} else {
 				mEngine.start();
+				mMusic.play();
 			}
 			return true;
 		} else {
