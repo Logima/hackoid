@@ -167,7 +167,7 @@ public class Main extends SimpleBaseGameActivity {
 						this.getVertexBufferObjectManager()) {
 					@Override
 					protected void preDraw(final GLState pGLState, final Camera pCamera) {
-						if (android.os.Build.MODEL.contains("Nexus")) {
+						if (android.os.Build.MODEL.contains("Nexus 7")) {
 							this.setShaderProgram(PositionTextureCoordinatesShaderProgram.getInstance());
 						} else {
 							this.setShaderProgram(Blur.RadialBlurShaderProgram.getInstance(stats.drunkness));
