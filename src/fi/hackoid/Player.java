@@ -45,7 +45,7 @@ public class Player {
 		//textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
 				//"player_walking.png", 0, 0, 10, 4);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
-				"player_animationframes.png", 0, 0, 10, 6);
+				"player_animationframes.png", 0, 0, 10, 8);
 		textureAtlas.load();
 	}
 
