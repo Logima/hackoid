@@ -55,6 +55,8 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 	
 	private PhysicsWorld world;
 	
+	private Stats stats;
+	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		camera = new CustomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -158,7 +160,9 @@ public class Main extends SimpleBaseGameActivity implements IAccelerationListene
 
 	private void createControllers() {
 		HUD yourHud = new HUD();
-
+		stats = new Stats(yourHud);
+		stats.createResources(this);
+		stats.createScene(this.getVertexBufferObjectManager());
 		final int xSize = 380;
 		final int ySize = 150;
 
