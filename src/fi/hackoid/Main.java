@@ -88,6 +88,8 @@ public class Main extends SimpleBaseGameActivity {
 
 	Set<Enemy> enemies = new HashSet<Enemy>();
 
+	Tree tree;
+
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		camera = new CustomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -254,6 +256,12 @@ public class Main extends SimpleBaseGameActivity {
 						world.destroyBody(beer.body);
 					}
 				}
+
+				if (tree.x + 1000 < player.animatedSprite.getX()) {
+					tree.setX(tree.x + 2000);
+				} else if (tree.x - 1000 > player.animatedSprite.getX()) {
+					tree.setX(tree.x - 2000);
+				}
 			}
 
 			@Override
@@ -275,6 +283,8 @@ public class Main extends SimpleBaseGameActivity {
 		autoParallaxBackground.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, CAMERA_HEIGHT
 				- this.backgroundTextureGround.getHeight(), this.backgroundTextureGround, vertexBufferObjectManager)));
 		scene.setBackground(autoParallaxBackground);
+
+		tree = new Tree(main, 400);
 
 		createControllers();
 
