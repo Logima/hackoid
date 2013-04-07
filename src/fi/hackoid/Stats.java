@@ -71,12 +71,7 @@ public class Stats {
 	
 	public void eatPie() {
 		if (pies > 3) {
-			Log.e("debug", "Level UP!");
-			while (pies > 0) {
-				pieLevel[pies].setVisible(false);
-				pies--;
-			}
-			return;
+			Log.e("debug", "Voitit pelin!");
 		} else {
 			pieLevel[pies].setVisible(true);
 			pies++;			
