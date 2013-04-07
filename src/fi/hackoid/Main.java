@@ -478,6 +478,7 @@ public class Main extends SimpleBaseGameActivity {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
 				if (touchEvent.isActionDown()) {
 					new SpearProjectile(main, world, player.animatedSprite, player.facingRight);
+					player.animateThrow();
 				}
 				return true;
 			};

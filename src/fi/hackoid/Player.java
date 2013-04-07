@@ -28,8 +28,10 @@ public class Player {
 	private static FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0);
 
 	private int frameTime = 50;
+	private int throwFrameTime = 75;
 	private long[] frameTimes = new long[] { frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime, frameTime,
 			frameTime, frameTime, frameTime, frameTime };
+	private long[] throwFrameTimes = new long[] { throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime, throwFrameTime };
 
 	Body body;
 	
@@ -39,9 +41,11 @@ public class Player {
 	}
 
 	public void createResources(Main main) {
-		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
+		textureAtlas = new BitmapTextureAtlas(main.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
+		//textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
+				//"player_walking.png", 0, 0, 10, 4);
 		textureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, main,
-				"player_walking.png", 0, 0, 10, 4);
+				"player_animationframes.png", 0, 0, 10, 6);
 		textureAtlas.load();
 	}
 
@@ -90,6 +94,14 @@ public class Player {
 			animatedSprite.animate(frameTimes, 0, 19, true);
 		} else {
 			animatedSprite.animate(frameTimes, 20, 39, true);
+		}
+	}
+	
+	public void animateThrow() {
+		if (facingRight) {
+			animatedSprite.animate(throwFrameTimes, 40, 47, false);
+		} else {
+			animatedSprite.animate(throwFrameTimes, 50, 57, false);
 		}
 	}
 
