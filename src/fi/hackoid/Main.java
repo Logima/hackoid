@@ -93,9 +93,11 @@ public class Main extends SimpleBaseGameActivity {
 	Fuhrer fuhrer;
 	DeathScreen deathScreen;
 	WinScreen winScreen;
-	
+
 	boolean playerDead = false;
-	
+
+	long lastThrowTime = 0;
+
 	HUD yourHud;
 	Boss boss;
 
@@ -317,8 +319,6 @@ public class Main extends SimpleBaseGameActivity {
 
 		tree = new Tree(main, 400);
 		fuhrer = new Fuhrer(main, 3000);
-		
-		
 
 		createControllers();
 
@@ -473,8 +473,10 @@ public class Main extends SimpleBaseGameActivity {
 
 		final Sprite fireControl = new Sprite(1070, 510, fireControlTexture, this.getVertexBufferObjectManager()) {
 			public boolean onAreaTouched(TouchEvent touchEvent, float X, float Y) {
-				if (touchEvent.isActionDown()) {
+				if (touchEvent.isActionDown() && System.currentTimeMillis() - lastThrowTime > 500) {
+					lastThrowTime = System.currentTimeMillis();
 					new SpearProjectile(main, world, player.animatedSprite, player.facingRight);
+					player.animateThrow();
 				}
 				return true;
 			};
@@ -490,7 +492,7 @@ public class Main extends SimpleBaseGameActivity {
 			if (mEngine.isRunning()) {
 				mEngine.stop();
 				mMusic.pause();
-			} else if(!playerDead){
+			} else if (!playerDead) {
 				mEngine.start();
 				mMusic.play();
 			}
@@ -523,24 +525,23 @@ public class Main extends SimpleBaseGameActivity {
 		}
 		return null;
 	}
-	
-	public void playerDeath(){
+
+	public void playerDeath() {
 		playerDead = true;
 		stats.drunkness = 0;
 		deathScreen = new DeathScreen(main, yourHud);
-		
+
 		mEngine.stop();
-		
+
 	}
-	
-	public void playerWin()
-	{
+
+	public void playerWin() {
 		playerDead = true;
 		stats.drunkness = 0;
-		
+
 		winScreen = new WinScreen(main, yourHud);
-		
+
 		mEngine.stop();
 	}
-	
+
 }
